@@ -1,0 +1,7 @@
+proverif:     {bin: proverif,       flags: [],            timeout_sec: 900}
+tamarin:      {bin: tamarin-prover, flags: ["--prove"],   timeout_sec: 1800}
+scyther:      {bin: scyther,        flags: [],            timeout_sec: 600}
+maude_npa:    {bin: maude-npa,      flags: [],            timeout_sec: 1200}
+avispa:       {bin: avispa,         flags: [],            timeout_sec: 1200}
+cryptoverif:  {bin: cryptoverif,    flags: [],            timeout_sec: 1200}
+easycrypt:    {bin: easycrypt,      flags: [],            timeout_sec: 1800}

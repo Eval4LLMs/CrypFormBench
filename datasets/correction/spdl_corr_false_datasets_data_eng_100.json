@@ -1,0 +1,100 @@
+[
+    {
+        "file": "SPDL-1/DHKE-1.spdl",
+        "falsecode": "/* \n * Two-Move Diffie-Hellman with Pseudo-Random Functions\n * Adapted from ISO 9798-3\n */\n\n// Basic type and function declarations\nusertype Nonce;\nusertype Ticket;\nusertype SessionKey;\n\n// Function declarations\nconst g1: Function;\nconst g2: Function;\nconst h1: Function;\n\n// Protocol declaration\nprotocol TMDH-PRF(I, R)\n{\n    role I\n    {\n        // Variables\n        fresh x: Nonce;\n        var beta: Ticket;\n        var i: Nonce;\n        \n        // Send a compromise message (indicating session initialization)\n        send_!I(I, I, x);\n        \n        // First message: I -> R\n        send_1(I, R, g1(x), R, {g1(x), R}sk(I));\n        \n        // Second message: R -> I\n        recv_2(R, I, beta, i, I, {beta, i, I}sk(R));\n        \n        // Final computation\n        send_3(I, R, h1(beta, x));\n        \n        // Security claim\n        claim_I1(I, Secret, g2(beta, x));\n        claim_I2(I, Alive);\n        claim_I3(I, Weakagree);\n        claim_I4(I, Niagree);\n        claim_I5(I, Nisynch);\n    }\n    \n    role R\n    {\n        // Variables\n        fresh y: Nonce;\n        fresh i: Nonce;\n        var alpha: Ticket;\n        \n        // Send a compromise message (indicating readiness)\n        send_!R(R, R, y);\n        \n        // First message: I -> R\n        recv_1(I, R, alpha, R, {alpha, R}sk(I));\n        \n        // Second message: R -> I\n        send_2(R, I, g1(y), i, I, {g1(y), i, I}sk(R));\n        \n        // Final message: I -> R\n        recv_3(I, R, h1(g1(y), alpha));\n        \n        // Security claim\n        claim_R1(R, Secret, g2(alpha, y));\n        claim_R2(R, Alive);\n        claim_R3(R, Weakagree);\n        claim_R4(R, Niagree);\n        claim_R5(R, Nisynch);\n    }\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there was a security issue in the targeted protocol. This was a false positive, and there should be no problem with the protocol.",
+        "code": "/* \n * Adaption of two-move Diffie-Hellman ISO-9798-3 according to Shmatikov, Gupta\n *\n * Version with no signatures, but pseudo-random functions\n */\n\n// Hash functions\nhashfunction h1,h2,g1,g2;\n\n/*\n * Hack to simulate g^ab = g^ba.\n * '@' prefix of protocol name denotes helper protocol, which is used by\n * Scyther for displaying, and such protocols are ignored in\n * auto-generation of protocol modifiers.\n */\nprotocol @exponentiation(RA,RS)\n{\n\trole RA\n\t{\n\t\tvar alpha,beta, T1,T2: Ticket;\n\n\t\trecv_!1(RA,RA, g2(g1(T1),T2) );\n\t\tsend_!2(RA,RA, g2(g1(T2),T1) );\n\t}\n\trole RS\n\t{\n\t\tvar alpha,beta, T1,T2: Ticket;\n\n\t\trecv_!3(RS,RS, h1( g2(g1(T1),T2) ) );\n\t\tsend_!4(RS,RS, h1( g2(g1(T2),T1) ) );\n\t}\n}\n\n// The protocol description\n\nprotocol twoDHiso-prf(I,R)\n{\n\trole I\n\t{\n\t\tfresh x: Nonce;\n\t\tvar i: Nonce;\n\t\tvar beta: Ticket;\n\n\t\tsend_Compromise(I,I, x );\n\n\t\tsend_1(I,R,  g1(x),R,         { g1(x),R }sk(I)        );\n\t\trecv_2(R,I,  g1(x),beta,i,I,  { g1(x),beta,i,I }sk(R) );\n\t\tsend_!3(I,R,  h1( g2(beta,x ) ) );\n\n\t\tclaim(I,SKR, g2(beta,x) );\n\t}\t\n\t\n\trole R\n\t{\n\t\tfresh y: Nonce;\n\t\tfresh i: Nonce;\n\t\tvar alpha: Ticket;\n\n\t\tsend_Compromise(R,R, y,i );\n\n\t\trecv_1(I,R,  alpha,R,          { alpha,R }sk(I)         );\n\t\tsend_2(R,I,  alpha,g1(y),i,I,  { alpha,g1(y),i,I }sk(R) );\n\t\trecv_!3(I,R,  h1( g2(alpha,y ) ) );\n\n\t\tclaim(R,SKR, g2(alpha,y) );\n\t}\n}",
+        "logic": "---\n\n**Protocol Description: Two-Move Diffie-Hellman with Pseudo-Random Functions**\n\nThis protocol is an adaptation of the two-move Diffie-Hellman key exchange method specified in ISO 9798-3, utilizing pseudo-random functions instead of signatures for message integrity. The protocol consists of two main roles: the initiator (I) and the responder (R). \n\n### Roles\n\n#### 1. Initiator (I)\n- **Initialization**: The initiator begins by creating a fresh nonce `x` to ensure the freshness of the session.\n- **Compromise Message**: The initiator sends a compromise message to itself, indicating that it is initiating a session.\n- **First Message**: The initiator sends a message to the responder (R), which includes:\n  - The value `g1(x)`, a transformed version of the nonce `x`.\n  - The identity of the responder (R).\n  - A signed message containing `g1(x)` and the responder's identity, ensuring the authenticity of the message using `sk(I)`, the secret key of the initiator.\n  \n- **Second Message Reception**: The initiator waits to receive a message from the responder, which should contain:\n  - The value `beta`, a ticket sent by the responder.\n  - The nonce `i`, which is unique for this session.\n  - The identity of the initiator (I) and a signed message ensuring the integrity of the response using `sk(R)`.\n\n- **Final Computation**: After receiving the second message, the initiator computes a hash value using the pseudo-random function `h1` on the concatenated values of `beta` and `x` and sends this as the final message.\n\n- **Claim**: The initiator claims that the shared secret key `SKR` is equal to `g2(beta, x)`.\n\n#### 2. Responder (R)\n- **Initialization**: The responder starts by creating a fresh nonce `y` and another fresh nonce `i` for session uniqueness.\n- **Compromise Message**: The responder sends a compromise message to itself, indicating readiness to participate in the exchange.\n- **First Message Reception**: The responder receives the first message from the initiator, which includes:\n  - The `alpha` value (the first part of the key exchange).\n  - The identity of the responder (R).\n  - A signed message ensuring the integrity of the incoming message using `sk(I)`.\n\n- **Second Message**: The responder prepares to send a message back to the initiator, which includes:\n  - The value `alpha`, received from the initiator.\n  - The transformed nonce `g1(y)`.\n  - The nonce `i` and the identity of the initiator (I), all signed with `sk(R)` for authenticity.\n\n- **Final Message Reception**: The responder awaits the final message from the initiator, which is a hash value generated by the initiator.\n\n- **Claim**: The responder claims that the shared secret key `SKR` is equal to `g2(alpha, y)`.\n\n### Key Properties\n- **Security**: The use of nonces and pseudo-random functions enhances security by ensuring messages cannot be reused or replayed.\n- **Authentication**: The inclusion of secret keys in the signing process guarantees that messages are authentic and have not been tampered with.\n\n### Conclusion\nThis two-move Diffie-Hellman protocol allows two parties to securely establish a shared secret key over an insecure channel, leveraging the properties of nonce generation and hash functions to ensure the integrity and confidentiality of the exchanged information.\n\n---",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "twoDHiso-prf",
+                        "I",
+                        "twoDHiso-prf,I1",
+                        "SKR g2(beta,x)",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "R",
+                        "twoDHiso-prf,R1",
+                        "SKR g2(alpha,y)",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.4758617877960205
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/otwayrees.spdl",
+        "falsecode": "/* \n * Otway-Rees protocol\n * \n * As described in standard formulations of the protocol.\n * Three roles: Initiator (I), Responder (R), and Server (S)\n * Uses symmetric encryption with shared keys between parties and server\n */\n\n// Protocol name declaration\nprotocol OtwayRees(I, R, S)\n{\n    // Type declarations\n    role I\n    {\n        // Variables and constants declarations\n        fresh Ni: Nonce;       // Initiator's nonce\n        fresh M: Ticket;       // Message identifier\n        var Nr: Nonce;         // Responder's nonce\n        var Kir: SessionKey;   // Session key\n\n        // Secret keys shared between parties and server\n        const Kis: SessionKey; // Key shared between I and S\n        const Krs: SessionKey; // Key shared between R and S (known to I for protocol modeling)\n\n        // Protocol steps from the Initiator's perspective\n        send_1(I, R, M, I, R, {M, I, R, Ni}Kis);\n        recv_4(R, I, M, {Ni, Kir}Kis);\n\n        // Security claims\n        claim_I1(I, Secret, Kir);\n        claim_I2(I, Nisynch);\n        claim_I3(I, Niagree);\n    }\n\n    role R\n    {\n        // Variables and constants declarations\n        var Ni: Nonce;         // Initiator's nonce\n        var M: Ticket;         // Message identifier\n        fresh Nr: Nonce;       // Responder's nonce\n        var Kir: SessionKey;   // Session key\n\n        // Secret keys shared between parties and server\n        const Krs: SessionKey; // Key shared between R and S\n        const Kis: SessionKey; // Key shared between I and S (known to R for protocol modeling)\n\n        // Protocol steps from the Responder's perspective\n        recv_1(I, R, M, I, R, {M, I, R, Ni}Kis);\n        send_2(R, S, M, I, R, {M, I, R, Ni}Kis, {M, I, R, Nr}Krs);\n        recv_3(S, R, M, {Nr, Kir}Krs, {Ni, Kir}Kis);\n        send_4(R, I, M, {Ni, Kir}Kis);\n\n        // Security claims\n        claim_R1(R, Secret, Kir);\n        claim_R2(R, Nisynch);\n        claim_R3(R, Niagree);\n    }\n\n    role S\n    {\n        // Variables and constants declarations\n        var Ni, Nr: Nonce;     // Nonces from I and R\n        var M: Ticket;         // Message identifier\n        fresh Kir: SessionKey; // Session key generated by the server\n\n        // Secret keys shared between parties and server\n        const Kis: SessionKey; // Key shared between I and S\n        const Krs: SessionKey; // Key shared between R and S\n\n        // Protocol steps from the Server's perspective\n        recv_2(R, S, M, I, R, {M, I, R, Ni}Kis, {M, I, R, Nr}Krs);\n        send_3(S, R, M, {Nr, Kir}Krs, {Ni, Kir}Kis);\n    }\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there were no security issues in the targeted protocol. This was a false negative, and there should be some problems with the protocol.",
+        "code": "# Otway Rees\n#\n# Modelled after the description in the SPORE library\n# http://www.lsv.ens-cachan.fr/spore/otwayRees.html\n#\n\n\nconst Fresh: Function;\nconst Compromised: Function;\n\nusertype String,SessionKey;\n\nprotocol otwayrees(I,R,S)\n{\n    role I\n    {\n        fresh Ni : Nonce;\n        fresh M : String;\n        var Kir : SessionKey;\n\n        send_1(I,R, M,I,R,{Ni,M,I,R}k(I,S) );\n        recv_4(R,I, M,{Ni,Kir}k(I,S) );\n\n        claim_I1(I, Secret,Kir);\n        claim_I2(I, Nisynch);\n        claim_I3(I, Empty, (Fresh,Kir));\n    }\n\n    role R\n    {\n        var M : String;\n        fresh Nr : Nonce;\n        var Kir : SessionKey;\n        var T1,T2: Ticket;\n\n        recv_1(I,R, M,I,R, T1 );\n        send_2(R,S, M,I,R, T1, { Nr,M,I,R }k(R,S) );\n        recv_3(S,R, M, T2, { Nr,Kir }k(R,S) );\n        send_4(R,I, M, T2 );\n\n        claim_R1(R, Secret,Kir);\n        claim_R2(R, Nisynch);\n        claim_R3(R, Empty, (Fresh,Kir));\n    }\n\n    role S\n    {\n        var Ni,Nr : Nonce;\n        var M : String;\n        fresh Kir : SessionKey;\n        \n        recv_2(R,S, M,I,R, { Ni,M,I,R}k(I,S), { Nr,M,I,R }k(R,S) );\n        send_3(S,R, M, { Ni,Kir }k(I,S) , { Nr,Kir }k(R,S) );\n    }\n}",
+        "logic": "### Description of the Otway-Rees Protocol\n\n#### Overview\nThe Otway-Rees protocol is a key exchange protocol that facilitates secure communication between two parties, I (Initiator) and R (Responder), using a trusted server S (Server) to mediate the exchange. The protocol utilizes nonces to ensure freshness and prevent replay attacks, and it incorporates symmetric encryption to protect the confidentiality of the messages exchanged.\n\n#### Participants\n- **Initiator (I)**: The party that starts the communication and wants to establish a secure session with the responder.\n- **Responder (R)**: The party that receives the request from the initiator and responds back with the necessary information to establish the session.\n- **Server (S)**: A trusted party that assists in generating and distributing session keys securely between the initiator and responder.\n\n#### Steps of the Protocol\n\n1. **Session Initialization**:\n   - The Initiator (I) generates a nonce (`Ni`) and a message (`M`) and sends an initial request to the Responder (R) and the Server (S). This message includes the nonce and the intended recipients' identities along with a ticket encrypted with the session key.\n\n2. **Response from Responder**:\n   - Upon receiving the initial request, the Responder (R) generates its own nonce (`Nr`) and processes the request. It sends a response back to the Server (S) that includes the nonces and the message. The response is also encrypted with a session key associated with the Responder.\n\n3. **Key Generation and Sending to Initiator**:\n   - The Server (S) receives the request from the Responder and generates a session key (`Kir`). It then sends this key back to the Responder along with the necessary nonces and the message. The Responder forwards the information to the Initiator.\n\n4. **Key Confirmation**:\n   - Finally, the Initiator receives the session key and confirms the establishment of the secure session. Both parties can now use the session key for encrypted communication.\n\n#### Claims\nThe protocol includes several claims that are essential for security verification:\n- **Claim I1**: The Initiator (I) claims that it possesses the session key (`Kir`), asserting its secrecy.\n- **Claim I2**: The Initiator (I) claims that it is synchronized with the Responder (R).\n- **Claim I3**: The Initiator (I) asserts that the session key (`Kir`) is fresh and unique.\n\n- **Claim R1**: The Responder (R) claims possession of the session key (`Kir`), ensuring its secrecy.\n- **Claim R2**: The Responder (R) claims to be synchronized with the Initiator (I).\n- **Claim R3**: The Responder (R) asserts that the session key (`Kir`) is fresh and unique.\n\n#### Security Properties\nThe Otway-Rees protocol is designed to ensure:\n- **Confidentiality**: Information exchanged is only accessible to participating parties.\n- **Authentication**: Only legitimate parties can establish the session.\n- **Freshness**: Nonces ensure that old messages cannot be reused in the protocol.\n- **Key Secrecy**: The session key established is kept secret from eavesdroppers.",
+        "results": [
+            true,
+            [
+                false,
+                [
+                    [
+                        "otwayrees",
+                        "I",
+                        "otwayrees,I1",
+                        "Secret Kir",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "otwayrees,I2",
+                        "Nisynch",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "R",
+                        "otwayrees,R1",
+                        "Secret Kir",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "otwayrees,R2",
+                        "Nisynch",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ]
+                ],
+                2.409329414367676
+            ]
+        ]
+    }
+]

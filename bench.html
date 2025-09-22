@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CrypFormBench — Formal Evaluation of Cryptographic Schemes</title>
+<meta name="description" content="CrypFormBench (C.F.B): Benchmarking LLMs for formal analysis of cryptographic schemes and protocols." />
+<style>
+:root{
+  --bg:#0b1220; --panel:#0f172a99; --glass:#ffffff10; --text:#e6ebff; --muted:#94a3b8;
+  --primary:#60a5fa; --accent:#22d3ee; --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#0b1220,#0a0f1c 40%,#0e1a2b);color:var(--text)}
+.bg-orb{position:fixed;z-index:-1;filter:blur(80px);opacity:.6;pointer-events:none}
+.orb1{top:-120px;left:-100px;width:420px;height:420px;background:radial-gradient(circle at 30% 30%,#1f9aff,transparent 60%)}
+.orb2{bottom:-120px;right:-120px;width:520px;height:520px;background:radial-gradient(circle at 70% 70%,#22d3ee,transparent 60%)}
+.nav{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:14px 24px;background:rgba(8,13,23,.35);backdrop-filter:blur(12px);border-bottom:1px solid #ffffff0f}
+.nav .brand{display:flex;gap:10px;align-items:center}
+.logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#60a5fa,#22d3ee);display:grid;place-items:center;font-weight:800;color:#0b1220;box-shadow:var(--shadow)}
+.brand-text{font-weight:700;letter-spacing:.4px}
+.nav a{color:var(--text);text-decoration:none;margin:0 10px;font-weight:500;opacity:.85}
+.nav a:hover{opacity:1}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;background:#ffffff14;color:var(--text);text-decoration:none;border:1px solid #ffffff22;transition:.2s ease;backdrop-filter:blur(8px)}
+.btn:hover{transform:translateY(-1px);border-color:#ffffff44}
+.btn.primary{background:linear-gradient(135deg,#3b82f6,#22d3ee);color:#04121e;border:0;font-weight:700}
+.btn.ghost{background:transparent;border:1px solid #ffffff30}
+.hero{padding:80px 24px 20px;max-width:1100px;margin:0 auto;text-align:center}
+.hero h1{font-size:48px;line-height:1.12;margin:0 0 12px;font-weight:800}
+.grad{background:linear-gradient(135deg,#60a5fa,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{color:var(--muted);font-size:18px}
+.hero-actions{margin:22px auto 26px;display:flex;gap:14px;justify-content:center}
+.hero-kpis{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:12px;margin:10px auto 0;max-width:800px}
+.kpi{background:var(--panel);border:1px solid #ffffff18;padding:14px;border-radius:12px;box-shadow:var(--shadow)}
+.kpi span{display:block;font-size:26px;font-weight:800}
+.kpi label{color:var(--muted);font-size:12px;letter-spacing:.3px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.select{display:flex;gap:8px;align-items:center;color:var(--muted)}
+.select select{background:#0e1527;border:1px solid #1e293b;color:var(--text);padding:8px 10px;border-radius:8px}
+.why{padding:48px 24px;max-width:1100px;margin:0 auto}
+.why h2{margin:0 0 14px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{padding:16px;border-radius:12px;border:1px solid #ffffff14;background:var(--panel);box-shadow:var(--shadow)}
+.card.glass{background:linear-gradient(180deg,#ffffff12,#ffffff08)}
+.leaderboard{padding:28px 24px;max-width:1100px;margin:0 auto}
+.lb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.lb-card{padding:16px;border-radius:14px;border:1px solid #ffffff18;background:linear-gradient(180deg,#0e192c,#0c1423);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.badge{position:absolute;right:12px;top:12px;font-size:12px;background:#ffffff14;padding:6px 8px;border-radius:8px;border:1px solid #ffffff22}
+.lb-name{font-weight:700;margin-bottom:8px}
+.lb-score{font-size:28px;font-weight:800}
+.meter{height:8px;background:#0b1220;border-radius:999px;border:1px solid #1f2a3d;overflow:hidden;margin-top:10px}
+.meter>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#60a5fa)}
+.lb-caps{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cap-chip{font-size:12px;padding:6px 8px;border-radius:999px;border:1px solid #ffffff1f;background:#ffffff0f}
+.capabilities{padding:28px 24px;max-width:1100px;margin:0 auto}
+.cap-wrap{display:grid;grid-template-columns:420px 1fr;gap:16px;align-items:center}
+.radar-wrap{position:relative;border:1px solid #ffffff18;border-radius:16px;padding:10px;background:#0c1423}
+.radar-legend{position:absolute;right:10px;top:10px;font-size:12px;color:var(--muted)}
+.model-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.model-item{padding:12px;border-radius:10px;background:#0e182a;border:1px solid #ffffff18;cursor:pointer;transition:.15s}
+.model-item:hover{transform:translateY(-2px)}
+.model-item.active{outline:2px solid #22d3ee}
+.dataset{padding:28px 24px;max-width:1100px;margin:0 auto}
+.dataset .tagline{color:var(--muted);margin-bottom:12px}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.tags span{padding:6px 10px;border-radius:999px;background:#0e182a;border:1px solid #ffffff18}
+.pipeline{padding:28px 24px;max-width:900px;margin:0 auto;text-align:center}
+.flow{list-style:none;display:flex;gap:10px;justify-content:center;padding:0;margin:10px 0 8px}
+.flow li{position:relative;background:#0e182a;border:1px solid #ffffff18;color:var(--text);padding:12px 14px;border-radius:12px}
+.flow li span{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#22d3ee,#60a5fa);color:#04121e;font-weight:800;margin-right:8px}
+.cta{padding:40px 24px;max-width:880px;margin:0 auto;text-align:center}
+.cta .cta-actions{margin-top:10px;display:flex;gap:12px;justify-content:center}
+.footer{padding:26px 24px;color:var(--muted);text-align:center;border-top:1px solid #ffffff0f;background:#0a111e}
+@media (max-width:980px){.cards{grid-template-columns:1fr 1fr}.lb-grid{grid-template-columns:1fr 1fr}.cap-wrap{grid-template-columns:1fr}.model-list{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}}
+@media (max-width:640px){.cards{grid-template-columns:1fr}.lb-grid{grid-template-columns:1fr}.model-list{grid-template-columns:1fr}}
+.dark body{background:linear-gradient(135deg,#070b13,#04060b)}
+</style>
+</head>
+<body>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+
+  <header class="nav">
+    <div class="brand">
+      <div class="logo">CFB</div>
+      <div class="brand-text">CrypFormBench</div>
+    </div>
+    <nav>
+      <a href="#why">Why C.F.B</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#dataset">Coverage</a>
+      <a href="#pipeline">Pipeline</a>
+      <a class="btn ghost" href="#get-started">Get Started</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Formal Evaluation of <span class="grad">Cryptographic Schemes</span><br/>— Let the data speak.</h1>
+    <p class="subtitle">Coverage × Correctness × Reproducibility — from high-level intent to implementation artifacts, across five model capabilities.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#leaderboard">See latest results</a>
+      <a class="btn" href="#why">Why choose C.F.B</a>
+    </div>
+    <div class="hero-kpis">
+      <div class="kpi"><span id="kpi-models">9</span><label>Models</label></div>
+      <div class="kpi"><span id="kpi-lang">7</span><label>Formal languages</label></div>
+      <div class="kpi"><span id="kpi-tasks">5</span><label>Capabilities</label></div>
+      <div class="kpi"><span id="kpi-repro">100%</span><label>Reproducible</label></div>
+    </div>
+  </section>
+
+  <section id="why" class="why">
+    <h2>Why C.F.B</h2>
+    <div class="cards">
+      <div class="card glass">
+        <h3>Multi-backend validation</h3>
+        <p>ProVerif, Tamarin, Scyther, Maude-NPA, AVISPA, CryptoVerif, EasyCrypt — cross-tool verification for robust conclusions.</p>
+      </div>
+      <div class="card glass">
+        <h3>Design → Implementation</h3>
+        <p>From protocol goals/assumptions to implementation-level artifacts (e.g., Jasmin/constant-time checks), end-to-end coverage.</p>
+      </div>
+      <div class="card glass">
+        <h3>Five capabilities</h3>
+        <p>Interpret / Generate / Complete / Convert / Fix — not just “write”, but “verify”.</p>
+      </div>
+      <div class="card glass">
+        <h3>Comprehensive dataset</h3>
+        <p>Curated end-to-end from design intent to implementation, covering protocols/schemes, security properties (secrecy, auth, integrity, freshness, PFS, IND-CPA/CCA, equivalence), adversary models (Dolev–Yao, state/ephemeral leaks, CK/eCK).</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="leaderboard" class="leaderboard">
+    <div class="section-head">
+      <h2>Overall Leaderboard (recomputed)</h2>
+      <div class="controls">
+        <label class="select">
+          <span>Sort by</span>
+          <select id="sortKey">
+            <option value="overall">Overall</option>
+            <option value="interpret">Interpret</option>
+            <option value="generate">Generate</option>
+            <option value="complete">Complete</option>
+            <option value="fix">Correction</option>
+            <option value="convert">Convert</option>
+          </select>
+        </label>
+        <button id="toggleDark" class="btn ghost">Dark</button>
+      </div>
+    </div>
+    <div id="lb-grid" class="lb-grid"></div>
+  </section>
+
+  <section id="capabilities" class="capabilities">
+    <h2>Capability Radar</h2>
+    <div class="cap-wrap">
+      <div class="radar-wrap">
+        <canvas id="radar" width="420" height="420" aria-label="Model capability radar"></canvas>
+        <div id="radar-legend" class="radar-legend"></div>
+      </div>
+      <div class="model-list" id="modelList"></div>
+    </div>
+  </section>
+
+  <section id="dataset" class="dataset">
+    <h2>Coverage</h2>
+    <div class="tagline">Schemes/Protocols × Security properties × Adversary models × Formal languages</div>
+    <div class="tags">
+      <span>Secrecy</span><span>Authentication</span><span>Integrity</span><span>Freshness</span>
+      <span>Forward Secrecy</span><span>IND-CPA/CCA</span><span>Equivalence</span><span>Dolev–Yao</span>
+      <span>CK/eCK</span><span>ProVerif</span><span>Tamarin</span><span>Scyther</span><span>AVISPA</span><span>Maude-NPA</span><span>CryptoVerif</span><span>EasyCrypt</span>
+    </div>
+  </section>
+
+  <section id="pipeline" class="pipeline">
+    <h2>Evaluation Pipeline</h2>
+    <ol class="flow">
+      <li><span>1</span> Generate</li>
+      <li><span>2</span> Verify</li>
+      <li><span>3</span> Aggregate</li>
+      <li><span>4</span> Viz</li>
+      <li><span>5</span> Render</li>
+    </ol>
+    <p class="note">Fully scriptable & CI-friendly; scoring formulas and weights are configurable.</p>
+  </section>
+
+  <section id="get-started" class="cta">
+    <h2>Get Started</h2>
+    <p>Use <code>scripts/cfb.sh</code> to reproduce results and figures locally in one go.</p>
+    <div class="cta-actions">
+      <a class="btn primary" href="#leaderboard">Explore Results</a>
+      <a class="btn ghost" href="#pipeline">See Pipeline</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> CrypFormBench • Reproducibility First.</p>
+  </footer>
+
+<script>
+window.__CFB__ = {
+  models: [
+    {"name":"Claude-3.5-Sonnet-Coder","generate":24.2,"complete":74.4,"fix":71.2,"convert":22.7,"interpret":91.7,"overall":51.0},
+    {"name":"DeepSeek-Coder","generate":5.8,"complete":68.0,"fix":63.9,"convert":0.0,"interpret":93.2,"overall":38.6},
+    {"name":"GPT-4o","generate":9.5,"complete":51.5,"fix":54.7,"convert":0.0,"interpret":94.1,"overall":35.0},
+    {"name":"DeepSeek-R1","generate":5.8,"complete":65.2,"fix":56.9,"convert":0.0,"interpret":77.4,"overall":34.6},
+    {"name":"LLaMA4-Instruct","generate":5.8,"complete":55.6,"fix":57.2,"convert":0.0,"interpret":44.4,"overall":27.8},
+    {"name":"GPT-4o-mini","generate":0.0,"complete":10.9,"fix":44.8,"convert":0.0,"interpret":93.8,"overall":23.0},
+    {"name":"Gemini-2.5-Pro","generate":7.7,"complete":25.9,"fix":35.6,"convert":0.0,"interpret":69.1,"overall":22.8},
+    {"name":"Grok-3","generate":12.8,"complete":36.7,"fix":0.0,"convert":0.0,"interpret":49.6,"overall":18.0},
+    {"name":"GLM-4","generate":0.0,"complete":22.8,"fix":14.5,"convert":0.0,"interpret":62.3,"overall":16.1}
+  ]
+};
+
+(() => {
+  const state = { models: window.__CFB__.models || [], sortKey:'overall', activeIndex:0 };
+  const $ = q => document.querySelector(q); const $$ = q => Array.from(document.querySelectorAll(q));
+
+  function renderLeaderboard(){
+    const grid = $('#lb-grid');
+    const data = [...state.models].sort((a,b)=> b[state.sortKey]-a[state.sortKey]);
+    grid.innerHTML = data.map((m,i)=>{
+      const caps = ['interpret','generate','complete','fix','convert']
+        .map(k=>`<span class="cap-chip">${k[0].toUpperCase()+k.slice(1)} ${m[k].toFixed(1)}</span>`).join('');
+      const width = Math.max(0, Math.min(100, m.overall));
+      return `<div class="lb-card">
+        <div class="badge">#${i+1}</div>
+        <div class="lb-name">${m.name}</div>
+        <div class="lb-score">${m.overall.toFixed(1)}</div>
+        <div class="meter"><i style="width:${width}%"></i></div>
+        <div class="lb-caps">${caps}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function drawRadar(){
+    const cvs=$('#radar'), ctx=cvs.getContext('2d'), W=cvs.width, H=cvs.height;
+    ctx.clearRect(0,0,W,H);
+    const center={x:W/2,y:H/2}, R=Math.min(W,H)/2-32, axes=['interpret','generate','complete','fix','convert'];
+    ctx.strokeStyle='rgba(255,255,255,.12)';
+    for(let r=0;r<=5;r++){ ctx.beginPath(); const rr=(R/5)*r;
+      for(let i=0;i<axes.length;i++){ const ang=-Math.PI/2+i*(2*Math.PI/axes.length);
+        const x=center.x+rr*Math.cos(ang), y=center.y+rr*Math.sin(ang);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      } ctx.closePath(); ctx.stroke();
+    }
+    for(let i=0;i<axes.length;i++){ const ang=-Math.PI/2+i*(2*Math.PI/axes.length);
+      const x=center.x+R*Math.cos(ang), y=center.y+R*Math.sin(ang);
+      ctx.beginPath(); ctx.moveTo(center.x,center.y); ctx.lineTo(x,y); ctx.stroke();
+      ctx.fillStyle='rgba(230,235,255,.85)'; ctx.font='12px Inter, system-ui';
+      const label=axes[i][0].toUpperCase()+axes[i].slice(1);
+      ctx.fillText(label, x+(x<center.x?-40:10), y+(y<center.y?-8:14));
+    }
+    const m=state.models[state.activeIndex]||state.models[0];
+    const vals=axes.map(k=>Math.max(0,Math.min(100,m[k])));
+    ctx.beginPath();
+    for(let i=0;i<axes.length;i++){ const ang=-Math.PI/2+i*(2*Math.PI/axes.length);
+      const rr=(vals[i]/100)*R; const x=center.x+rr*Math.cos(ang), y=center.y+rr*Math.sin(ang);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    } ctx.closePath();
+    const grad=ctx.createLinearGradient(0,0,W,H);
+    grad.addColorStop(0,'rgba(34,211,238,.55)'); grad.addColorStop(1,'rgba(96,165,250,.55)');
+    ctx.fillStyle=grad; ctx.fill(); ctx.strokeStyle='rgba(34,211,238,.85)'; ctx.lineWidth=2; ctx.stroke();
+    $('#radar-legend').textContent = m?.name || '';
+  }
+
+  function renderModelList(){
+    const list = $('#modelList');
+    list.innerHTML = state.models.map((m,i)=>`
+      <div class="model-item ${i===state.activeIndex?'active':''}" data-idx="${i}">
+        <div style="font-weight:700">${m.name}</div>
+        <div style="color:#94a3b8;font-size:12px">Overall ${m.overall.toFixed(1)}</div>
+      </div>
+    `).join('');
+    $$('#modelList .model-item').forEach(el => el.addEventListener('click', () => {
+      state.activeIndex = +el.dataset.idx; renderModelList(); drawRadar();
+    }));
+  }
+
+  function initControls(){
+    $('#sortKey').addEventListener('change', e => { state.sortKey=e.target.value; renderLeaderboard(); });
+    $('#toggleDark').addEventListener('click', ()=> document.documentElement.classList.toggle('dark'));
+    document.getElementById('year').textContent = new Date().getFullYear();
+  }
+
+  renderLeaderboard(); renderModelList(); drawRadar(); initControls();
+})();
+</script>
+</body>
+</html>

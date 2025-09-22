@@ -1,0 +1,177 @@
+[
+    {
+        "file": "SPDL-1/andrew-lowe-ban.spdl",
+        "errorcode": "# Lowe modified BAN concrete Andrew Secure RPC\n#\n# Modelled after the description in the SPORE library\n# http://www.lsv.ens-cachan.fr/spore/andrewLowe.html\n#\n# Note:\n# The shared key between I and R is modelled as k(I,R) currently\n# there is no way to express that this key is equal to k(R,I)\n# So it is possile that certain attacks that use this property are not found\n#\n# Note:\n# Recv 4 by the Initatior has been placed after the synchronisation claim\n# as it allows trivial synchronisation attacks otherwise (the message is\n# completely fresh and can therefore always be replaced by an arbitrary value\n# created by the intruder) which are not considered in SPORE\n#\n# Note:\n# According to SPORE there are no known attacks on this protocol\n#\n\nusertype SessionKey;\nconst Fresh: Function;\nconst Compromised: Function;\n\nprotocol andrew-LoweBan(I,R)\n{\n    role I\n    {\n        fresh ni: Nonce;\n        var nr: Nonce;\n        var kir: SessionKey;\n\n        send_1(I,R, I,ni );\n        recv_2(R,I, {ni,kir,R}k(I,R) );\n        send_3(I,R, {ni}kir );\n        claim_I1(I,\n        claim_I2(I,Secret, kir);\n        claim_I3(I,Empty, (Fresh,kir));\n        recv_4(R,I, nr );\n    }    \n    \n    role R\n    {\n        var ni: Nonce;\n        fresh nr: Nonce;\n        fresh kir: SessionKey;\n\n        recv_1(I,R, I,ni );\n        send_2(R,I, {ni,kir,R}k(I,R) );\n        recv_3(I,R, {ni}kir );\n        send_4(R,I, nr );\n        claim_R1(R,Nisynch);\n        claim_R2(R,Secret, kir);\n        claim_R3(R,Empty, (Fresh,kir));\n    }\n}",
+        "errorinfo": "Line 36 is missing part of the content.",
+        "code": "# Lowe modified BAN concrete Andrew Secure RPC\n#\n# Modelled after the description in the SPORE library\n# http://www.lsv.ens-cachan.fr/spore/andrewLowe.html\n#\n# Note:\n# The shared key between I and R is modelled as k(I,R) currently\n# there is no way to express that this key is equal to k(R,I)\n# So it is possile that certain attacks that use this property are not found\n#\n# Note:\n# Recv 4 by the Initatior has been placed after the synchronisation claim\n# as it allows trivial synchronisation attacks otherwise (the message is\n# completely fresh and can therefore always be replaced by an arbitrary value\n# created by the intruder) which are not considered in SPORE\n#\n# Note:\n# According to SPORE there are no known attacks on this protocol\n#\n\nusertype SessionKey;\nconst Fresh: Function;\nconst Compromised: Function;\n\nprotocol andrew-LoweBan(I,R)\n{\n    role I\n    {\n        fresh ni: Nonce;\n        var nr: Nonce;\n        var kir: SessionKey;\n\n        send_1(I,R, I,ni );\n        recv_2(R,I, {ni,kir,R}k(I,R) );\n        send_3(I,R, {ni}kir );\n        claim_I1(I,Nisynch);\n        claim_I2(I,Secret, kir);\n        claim_I3(I,Empty, (Fresh,kir));\n        recv_4(R,I, nr );\n    }    \n    \n    role R\n    {\n        var ni: Nonce;\n        fresh nr: Nonce;\n        fresh kir: SessionKey;\n\n        recv_1(I,R, I,ni );\n        send_2(R,I, {ni,kir,R}k(I,R) );\n        recv_3(I,R, {ni}kir );\n        send_4(R,I, nr );\n        claim_R1(R,Nisynch);\n        claim_R2(R,Secret, kir);\n        claim_R3(R,Empty, (Fresh,kir));\n    }\n}",
+        "logic": "---\n\n### Protocol Description: Andrew Secure RPC\n\n**Overview:**\nThe Andrew Secure RPC protocol is a secure communication protocol designed for two parties, an Initiator (I) and a Responder (R), to establish a secure session using a shared secret key. The protocol ensures confidentiality and integrity of messages exchanged between the parties while preventing unauthorized access.\n\n**Roles:**\n1. **Initiator (I)**: The party that starts the communication and sends the initial message.\n2. **Responder (R)**: The party that responds to the Initiator's message and completes the session establishment.\n\n**Key Components:**\n- **Nonces**: Random values (`ni` for Initiator and `nr` for Responder) used to ensure freshness of messages and prevent replay attacks.\n- **Session Key (kir)**: A key shared between the Initiator and Responder for the duration of the session. This key is derived during the protocol execution.\n\n**Message Flow:**\n1. **Step 1**: The Initiator (I) generates a nonce (`ni`) and sends a message to the Responder (R) containing its identity (`I`) and the nonce (`ni`).\n   - Message: `send_1(I, R, I, ni)`\n\n2. **Step 2**: The Responder (R) receives the message, generates its own nonce (`nr`), and creates a session key (`kir`). It then sends back a message to the Initiator containing the nonce (`ni`), the session key (`kir`), and its identity (`R`), all encrypted with the shared key `k(I, R)`.\n   - Message: `send_2(R, I, {ni, kir, R}k(I, R))`\n\n3. **Step 3**: The Initiator (I) receives the message, extracts the session key (`kir`), and sends a confirmation message back to the Responder (R) containing the nonce (`ni`) encrypted with the session key (`kir`).\n   - Message: `send_3(I, R, {ni}kir)`\n\n4. **Step 4**: After confirmation, the Responder (R) sends its nonce (`nr`) back to the Initiator (I) to complete the session establishment.\n   - Message: `send_4(R, I, nr)`\n\n**Claims:**\n- **Initiator Claims**:\n  1. `claim_I1(I, Nisynch)`: The Initiator claims that the session is synchronized.\n  2. `claim_I2(I, Secret, kir)`: The Initiator claims that it has established a secret session key (`kir`).\n  3. `claim_I3(I, Empty, (Fresh, kir))`: The Initiator claims the session key (`kir`) is fresh.\n\n- **Responder Claims**:\n  1. `claim_R1(R, Nisynch)`: The Responder claims that the session is synchronized.\n  2. `claim_R2(R, Secret, kir)`: The Responder claims that it has established a secret session key (`kir`).\n  3. `claim_R3(R, Empty, (Fresh, kir))`: The Responder claims the session key (`kir`) is fresh.\n\n**Important Notes:**\n- The shared key between the Initiator and Responder (`k(I, R)`) is modeled as a symmetric key, and there is currently no formalism in the model to express that this key is equal to `k(R, I)`. \n- The placement of the reception of message 4 by the Initiator after the synchronization claim is intentional to prevent trivial synchronization attacks.\n- According to the SPORE library, there are no known attacks on this protocol, indicating a robust design against common vulnerabilities.\n\n---",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "andrew-LoweBan",
+                        "I",
+                        "andrew-LoweBan,I1",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "andrew-LoweBan,I2",
+                        "Secret kir",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "R",
+                        "andrew-LoweBan,R1",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "andrew-LoweBan,R2",
+                        "Secret kir",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.16938185691833496
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/base.spdl",
+        "errorcode": "const pk: Function;\nsecret sk: Function;\ninversekeys (pk,sk);\n\nhashfunction hash;\nusertype UID, Timestamp, Amount;\nconst a: Amount;\n\nconst IDm, IDc: UID;\n\nmacro IDt = hash(a, r, IDc, IDm);\nmacro Sm = {hash(C, IDm, a, r)}sk(M);\nmacro Sc = {hash(B, IDc, IDm, a, r, Sm)}sk(C);\nmacro Sb = {hash(M, C, IDt, a, r, t)}sk(B);\n\n\nprotocol BaseCaseProtocol(M, C, B)\n{\n\trole M\n\t{\n\t\tfresh r: Nonce;\n\t\tvar t: \n\n\t\t/*\n\t\t* Send transaction request to customer\n\t\t*/\n\t\tsend_1 (M, C, IDm, a, r, Sm);\n\n\t\t/*\n\t\t* Receive payment confirmation from bank\n\t\t*/\n\t\trecv_3 (B, M, IDt, a, r, t, Sb);\n\n\t\tclaim (M, Alive);\n\t\tclaim (M, Nisynch);\n\t\tclaim (M, Niagree);\n\t}\n\n\trole C\n\t{\n\t\tvar t: Timestamp;\n\t\tvar r: Nonce;\n\n\t\t/*\n\t\t* Receive transaction request from merchant\n\t\t*/\n\t\trecv_1 (M, C, IDm, a, r, Sm);\n\n\t\t/*\n\t\t* Send transaction confirmation to bank\n\t\t*/\n\t\tsend_2 (C, B, IDc, IDm, a, r, Sm, Sc);\n\n\t\t/*\n\t\t* Claim non-injective synch and agreement before receiving the last message to prevent Scyther from flagging redirection of send_3 to C as an attack\n\t\t*/\n\t\tclaim (C, Nisynch);\n\t\tclaim (C, Niagree);\n\n\t\t/*\n\t\t* Receive payment confirmation from bank\n\t\t*/\n\t\trecv_4 (B, C, IDt, a, r, t, Sb);\n\n\t\tclaim (C, Alive);\n\t}\n\n\trole B\n\t{\n\t\tvar r: Nonce;\n\n\t\t/*\n\t\t* Receive transaction confirmation/payment request from customer\n\t\t*/\n\t\trecv_2 (C, B, IDc, IDm, a, r, Sm, Sc);\n\n\t\tfresh t: Timestamp;\n\n\t\t/*\n\t\t* Send payment confirmations to merchant and customer\n\t\t*/\n\t\tsend_3 (B, M, IDt, a, r, t, Sb);\n\t\tsend_4 (B, C, IDt, a, r, t, Sb);\n\n\t\tclaim (B, Alive);\n\t\tclaim (B, Nisynch);\n\t\tclaim (B, Niagree);\n\t}\n}",
+        "errorinfo": "Line 22 is missing part of the content.",
+        "code": "const pk: Function;\nsecret sk: Function;\ninversekeys (pk,sk);\n\nhashfunction hash;\nusertype UID, Timestamp, Amount;\nconst a: Amount;\n\nconst IDm, IDc: UID;\n\nmacro IDt = hash(a, r, IDc, IDm);\nmacro Sm = {hash(C, IDm, a, r)}sk(M);\nmacro Sc = {hash(B, IDc, IDm, a, r, Sm)}sk(C);\nmacro Sb = {hash(M, C, IDt, a, r, t)}sk(B);\n\n\nprotocol BaseCaseProtocol(M, C, B)\n{\n\trole M\n\t{\n\t\tfresh r: Nonce;\n\t\tvar t: Timestamp;\n\n\t\t/*\n\t\t* Send transaction request to customer\n\t\t*/\n\t\tsend_1 (M, C, IDm, a, r, Sm);\n\n\t\t/*\n\t\t* Receive payment confirmation from bank\n\t\t*/\n\t\trecv_3 (B, M, IDt, a, r, t, Sb);\n\n\t\tclaim (M, Alive);\n\t\tclaim (M, Nisynch);\n\t\tclaim (M, Niagree);\n\t}\n\n\trole C\n\t{\n\t\tvar t: Timestamp;\n\t\tvar r: Nonce;\n\n\t\t/*\n\t\t* Receive transaction request from merchant\n\t\t*/\n\t\trecv_1 (M, C, IDm, a, r, Sm);\n\n\t\t/*\n\t\t* Send transaction confirmation to bank\n\t\t*/\n\t\tsend_2 (C, B, IDc, IDm, a, r, Sm, Sc);\n\n\t\t/*\n\t\t* Claim non-injective synch and agreement before receiving the last message to prevent Scyther from flagging redirection of send_3 to C as an attack\n\t\t*/\n\t\tclaim (C, Nisynch);\n\t\tclaim (C, Niagree);\n\n\t\t/*\n\t\t* Receive payment confirmation from bank\n\t\t*/\n\t\trecv_4 (B, C, IDt, a, r, t, Sb);\n\n\t\tclaim (C, Alive);\n\t}\n\n\trole B\n\t{\n\t\tvar r: Nonce;\n\n\t\t/*\n\t\t* Receive transaction confirmation/payment request from customer\n\t\t*/\n\t\trecv_2 (C, B, IDc, IDm, a, r, Sm, Sc);\n\n\t\tfresh t: Timestamp;\n\n\t\t/*\n\t\t* Send payment confirmations to merchant and customer\n\t\t*/\n\t\tsend_3 (B, M, IDt, a, r, t, Sb);\n\t\tsend_4 (B, C, IDt, a, r, t, Sb);\n\n\t\tclaim (B, Alive);\n\t\tclaim (B, Nisynch);\n\t\tclaim (B, Niagree);\n\t}\n}",
+        "logic": "### Protocol Description: BaseCaseProtocol\n\nThe **BaseCaseProtocol** outlines a secure transaction process between a Merchant, a Customer, and a Bank. The protocol ensures that the transaction is completed with the required confirmations from both the Bank and the Customer while maintaining security measures against potential attacks.\n\n#### Roles:\n1. **Merchant (M)**:\n   - Initiates the transaction by sending a request to the Customer.\n   - Waits for a confirmation from the Bank after the Customer has processed the transaction.\n   - Claims to be alive and maintains synchronization and agreement with the other parties.\n\n2. **Customer (C)**:\n   - Receives the transaction request from the Merchant.\n   - Sends a confirmation of the transaction to the Bank after receiving the request.\n   - Claims to be alive and ensures synchronization and agreement before receiving the final confirmation.\n\n3. **Bank (B)**:\n   - Receives the transaction confirmation from the Customer.\n   - Sends payment confirmations to both the Merchant and the Customer after processing the transaction.\n   - Claims to be alive and maintains synchronization and agreement with the other parties.\n\n#### Key Components:\n- **Constants**: \n  - `pk`: Public key function for encryption.\n  - `sk`: Secret key function for decryption.\n  - `hash`: A hash function used for ensuring data integrity.\n  - `UID`: User identifier type.\n  - `Timestamp`, `Amount`: Types for transaction data.\n  - `a`: A constant amount for the transaction.\n  - `IDm`, `IDc`: Unique identifiers for the Merchant and Customer.\n\n- **Macros**:\n  - `IDt`: Generates a transaction identifier based on the hash of various parameters.\n  - `Sm`, `Sc`, `Sb`: Generate signatures for messages exchanged between roles, ensuring authenticity and integrity.\n\n#### Protocol Flow:\n1. **Merchant to Customer**:\n   - The Merchant sends a transaction request containing its ID, the transaction amount, a nonce (r), and a signature (Sm) to the Customer.\n\n2. **Customer to Bank**:\n   - The Customer receives the transaction request and sends a confirmation to the Bank, including its ID, Merchant's ID, transaction amount, nonce, the signature received from the Merchant (Sm), and its own signature (Sc).\n\n3. **Bank to Merchant and Customer**:\n   - The Bank receives the confirmation from the Customer, processes the transaction, and sends confirmation messages to both the Merchant and the Customer. The message includes the transaction identifier, amount, nonce, timestamp, and signature (Sb).\n\n#### Claims:\n- Each role makes specific claims regarding their state:\n  - **Alive**: Indicates that the role is functioning as expected.\n  - **Nisynch**: Claims non-injective synchronization, ensuring that the messages received are consistent with the expected flow.\n  - **Niagree**: Claims non-injective agreement, ensuring that the roles have reached a consensus on the transaction.\n\n### Conclusion:\nThe BaseCaseProtocol is designed to facilitate secure and reliable payment transactions among a Merchant, Customer, and Bank. It employs cryptographic techniques to ensure data integrity and authenticity while enabling claims about the roles\u2019 states to prevent potential attacks during the transaction process.",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "BaseCaseProtocol",
+                        "M",
+                        "BaseCaseProtocol,M1",
+                        "Alive",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "BaseCaseProtocol,M2",
+                        "Nisynch",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "BaseCaseProtocol,M3",
+                        "Niagree",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "C",
+                        "BaseCaseProtocol,C1",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "BaseCaseProtocol,C2",
+                        "Niagree",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "BaseCaseProtocol,C3",
+                        "Alive",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "B",
+                        "BaseCaseProtocol,B1",
+                        "Alive",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "BaseCaseProtocol,B2",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "BaseCaseProtocol,B3",
+                        "Niagree",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ]
+                ],
+                1.848902702331543
+            ]
+        ]
+    }
+]
