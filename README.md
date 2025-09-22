@@ -15,13 +15,13 @@
 
 ---
 
-### View web page on https://github.com/Eval4LLMs/CrypFormBench/tree/master/bench.html
+### View web page on https://Eval4LLMs.github.io/CrypFormBench
 
 ## 🔗 Quick Links
 
-- **[Leaderboard Snapshot](https://chatgpt.com/?temporary-chat=true#-leaderboard-snapshot)** · **[Datasets**](https://chatgpt.com/?temporary-chat=true#-datasets)** · **[Quick Start](https://chatgpt.com/?temporary-chat=true#-quick-start)** · **[Reproduce the Benchmark](https://chatgpt.com/?temporary-chat=true#-reproducing-the-benchmark)** · **[Evaluate a New Model](https://chatgpt.com/?temporary-chat=true#-evaluate-a-new-model)**
-- **[Repository Layout](https://chatgpt.com/?temporary-chat=true#-repository-layout)** · **[Data Formats](https://chatgpt.com/?temporary-chat=true#-data-formats--conventions)** · [Results & Figures](https://chatgpt.com/?temporary-chat=true#-results--figures)**
-- **[References](https://chatgpt.com/?temporary-chat=true#-references)** · **[FAQ](https://chatgpt.com/?temporary-chat=true#-faq)**
+- **[Leaderboard Snapshot]()** · **[Datasets**]()** · **[Quick Start]()** · **[Reproduce the Benchmark]()** · **[Evaluate a New Model]()**
+- **[Repository Layout]()** · **[Data Formats]()** · [Results & Figures]()**
+- **[References]()** · **[FAQ]()**
 
 ---
 
@@ -328,7 +328,7 @@ python -m code.viz.plot_all \
 ├─ original_results/     # Verifier logs / normalized verdicts
 ├─ result_figures/       # Publication-ready plots (PNG/SVG/PDF)
 └─ overview.png          # High-level pipeline diagram
-└─ bench.html            # View of HTML File
+└─ index.html            # View of HTML File
 ```
 
 ---
