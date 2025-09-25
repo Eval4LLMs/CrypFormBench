@@ -95,7 +95,7 @@ python -m code.viz.plot_capability_boards --in calculated_results --out result_f
 python -m code.viz.render_readme_leaderboards \
   --in calculated_results \
   --readme README.md \
-  --blocks OVERALL INTERPRET GENERATE COMPLETE CONVERT FIX \
+  --blocks OVERALL INTERPRETATION GENERATION COMPLETATION TRANSFORMAION CORRECTION \
   --overwrite-blocks
 ```
 
@@ -388,7 +388,7 @@ Aggregate per-task metrics and recompute composite scores (per §4.5).
 
 * `a = analyzable ratio`
 * `ACC_A, F1_A` on analyzable subset
-* **Executable tasks (Generate/Complete/Convert/Correction)**
+* **Executable tasks (Generation/Completion/Transformation/Correction)**
   `Q = HM(ACC_A, F1_A)`
   `S_task = HM(a^γ, Q)` with `γ = 1` (configurable)
 * **Interpretation (recomputed)**
@@ -428,7 +428,7 @@ Render the **Overall** chart/table.
 
 ### `python -m code.viz.plot_capability_boards`
 
-Render **Interpret/Generate/Complete/Convert/Fix** leaderboards.
+Render **Interpret/Generation/Completion/Transformation/Correction** leaderboards.
 
 ### `python -m code.viz.render_readme_leaderboards`
 

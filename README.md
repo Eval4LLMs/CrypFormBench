@@ -15,7 +15,7 @@
 
 ---
 
-### View web page on https://Eval4LLMs.github.io/CrypFormBench
+## View web page on https://Eval4LLMs.github.io/CrypFormBench
 
 ## 🔗 Quick Links
 
@@ -135,7 +135,7 @@
 
 <!-- LEADERBOARD_INTERPRET:END -->
 
-### 🧱 Generate
+### 🧱 Generation
 <!-- LEADERBOARD_GENERATE:BEGIN -->
 | Rank | Model                     | S_generate (recalc) |
 |:----:|---------------------------|:-------------------:|
@@ -151,7 +151,7 @@
 
 <!-- LEADERBOARD_GENERATE:END -->
 
-### 🧩 Complete
+### 🧩 Completion
 <!-- LEADERBOARD_COMPLETE:BEGIN -->
 | Rank | Model                     | S_complete (recalc) |
 |:----:|---------------------------|:-------------------:|
@@ -183,7 +183,7 @@
 
 <!-- LEADERBOARD_FIX:END -->
 
-### 🔁 Convert
+### 🔁 Transformation
 <!-- LEADERBOARD_CONVERT:BEGIN -->
 | Rank | Model                     | S_convert (recalc) |
 |:----:|---------------------------|:------------------:|
@@ -216,10 +216,10 @@ Our dataset is curated to reflect the **full lifecycle of cryptographic protocol
   - **Implementation security (Jasmin-level)**: artifacts and checks around low-level crypto code in **Jasmin**, focusing on side-channel discipline (e.g., constant-time style) and verifier-guided sanity checks that complement the formal specs.
 - **Tasks & capabilities**
   - **Interpret** (explain/annotate formal code)
-  - **Generate** (from scratch, guided by goals/assumptions)
-  - **Complete** (fill missing blocks in valid specs)
-  - **Convert** (cross-language translation with semantics preserved)
-  - **Fix** (syntax- and semantics-guided repair using verifier feedback)
+  - **Generation** (from scratch, guided by goals/assumptions)
+  - **Completion** (fill missing blocks in valid specs)
+  - **Transformation** (cross-language translation with semantics preserved)
+  - **Correction** (syntax- and semantics-guided repair using verifier feedback)
 - **Security properties (symbolic & computational)**
   - **Secrecy/confidentiality**, **authentication** (entity, mutual, injective/non-injective), **integrity**
   - **Freshness**, **replay resistance**, **session binding**, **channel binding**
@@ -232,6 +232,120 @@ Our dataset is curated to reflect the **full lifecycle of cryptographic protocol
 - **Languages & tools**
   - **ProVerif**, **Tamarin**, **Scyther**, **Maude-NPA**, **AVISPA**, **CryptoVerif**, **EasyCrypt**
   - Each instance includes *tool config, timeouts, flags*, and expected verdict normalization
+
+---
+
+## 📋 Prompt & Example Evaluation Trace
+
+This benchmark ships examples of *evaluation traces* for each task under `html/*.json`.
+**Important:** the structure of the JSON is discovered dynamically by unwrapping to the “language → model → record” layer.
+
+### JSON Structure (schema, root-agnostic)
+
+```json
+{
+  "<any-root-key>": {
+    "<language>": {
+      "<model>": {
+        "filename": "string",
+        "inputdata": { /* dataset content object or string */ },
+        "prompt": [ /* chat-style messages OR a string */ ],
+        "modelinput": [ /* the exact model input after templating */ ],
+        "model": "string",             /* (optional) model name */
+        "modeloutput": "string|object",
+        "evalresult": { /* metrics / bookkeeping */ }
+      }
+    }
+  }
+}
+````
+
+
+### 🔁 Five-stage pipeline
+
+1. **Dataset content (`inputdata`)**
+2. **Prompt (`prompt`)**
+3. **Model input (`modelinput`)** – after templating/assembly
+4. **Model output (`modeloutput`)**
+5. **Eval result (`evalresult`)**
+
+Each stage is logged per *(task, language, model)*.
+
+
+### 💡 Example (from `html/generation.json`)
+
+**Task**: `generation`
+**Language**: `ec`
+**Model**: `llama4-maverick-instruct-basic`
+**Filename**: `EC-1/KEMDEM.ec`
+
+<b>① Dataset Content (inputdata)</b> — expand to view</summary>
+
+```json
+{
+  "file": "EC-1/KEMDEM.ec",
+  "logic": "… full logic/program text …",
+  "results": { "…": "…" }
+}
+```
+
+<b>② Prompt (prompt)</b> — chat-style template
+
+```json
+[
+  {
+    "role": "system",
+    "content": "You are an expert on formal verification for cryptographic schemes, specialized in the <tool_name> tool. I will give you a logic description file ..."
+  },
+  {
+    "role": "user",
+    "content": "… instruction + dataset excerpt …"
+  }
+]
+```
+
+<b>③ Model Input (modelinput)</b> — the exact payload sent to the model
+
+```json
+[
+  { "role": "system", "content": "You are an expert … EasyCrypt tool. I will give you a logic description file …" },
+  { "role": "user", "content": "… fully constructed user message with embedded logic …" }
+]
+```
+
+<b>④ Model Output (modeloutput)</b> — model’s response
+
+```text
+Based on the given description of the KEM-DEM construction …
+… (full generated code / explanation here) …
+```
+
+<b>⑤ Eval Result (evalresult)</b> — scoring & bookkeeping
+
+```json
+{
+  "num_generates": 1,
+  "num_analysis": 0,
+  "num_timeout": 0,
+  "tp": 0, "tn": 0, "fp": 0, "fn": 0,
+  "timeuse": null,
+  "filesize": 0,
+  "score": "… task-specific metric …"
+}
+```
+
+> Tip: On the website https://Eval4LLMs.github.io/CrypFormBench, the "Evaluation Process" panel defaults to
+> `generation / <available-language> / llama4-maverick-instruct-basic`.
+> You can switch task/language/model from the dropdowns; the five blocks above are populated from the
+> corresponding JSON entry.
+
+
+### 🔗 Where the cases lives
+
+* Web UI loads from: `html/generation.json`, `html/completion.json`, `html/translation.json`,
+  `html/interpretation_logic.json`, `html/interpretation_notation.json`,
+  `html/correction_false.json`, `html/correction_error.json`.
+* Each file follows the schema above (root key can vary). The site auto-detects the language layer.
 
 ---
 
@@ -329,6 +443,7 @@ python -m code.viz.plot_all \
 ├─ result_figures/       # Publication-ready plots (PNG/SVG/PDF)
 └─ overview.png          # High-level pipeline diagram
 └─ index.html            # View of HTML File
+└─ html                  # Process of evaluation cases and vedios
 ```
 
 ---

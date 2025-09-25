@@ -91,6 +91,8 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
       <a href="#capabilities">Capabilities</a>
       <a href="#dataset">Coverage</a>
       <a href="#pipeline">Pipeline</a>
+      <a href="#eval-process">Real-Cases</a>
+      <a href="#demo-video">Vedio</a>
       <a class="btn ghost" href="#get-started">Get Started</a>
     </nav>
   </header>
@@ -123,7 +125,7 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
       </div>
       <div class="card glass">
         <h3>Five capabilities</h3>
-        <p>Interpret / Generate / Complete / Convert / Fix — not just “write”, but “verify”.</p>
+        <p>Interpretation / Generation/ Completion / Transformation / Correction — not just “write”, but “verify”.</p>
       </div>
       <div class="card glass">
         <h3>Comprehensive dataset</h3>
@@ -140,11 +142,11 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
           <span>Sort by</span>
           <select id="sortKey">
             <option value="overall">Overall</option>
-            <option value="interpret">Interpret</option>
-            <option value="generate">Generate</option>
-            <option value="complete">Complete</option>
+            <option value="interpret">Interpretation</option>
+            <option value="generate">Generation</option>
+            <option value="complete">Completion</option>
             <option value="fix">Correction</option>
-            <option value="convert">Convert</option>
+            <option value="convert">Transformation</option>
           </select>
         </label>
         <button id="toggleDark" class="btn ghost">Dark</button>
@@ -194,10 +196,6 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
       <a class="btn ghost" href="https://github.com/Eval4LLMs/CrypFormBench">See Pipeline</a>
     </div>
   </section>
-
-  <footer class="footer">
-    <p>© <span id="year"></span> CrypFormBench • Reproducibility First.</p>
-  </footer>
 
 <script>
 window.__CFB__ = {
@@ -282,11 +280,391 @@ window.__CFB__ = {
   function initControls(){
     $('#sortKey').addEventListener('change', e => { state.sortKey=e.target.value; renderLeaderboard(); });
     $('#toggleDark').addEventListener('click', ()=> document.documentElement.classList.toggle('dark'));
-    document.getElementById('year').textContent = new Date().getFullYear();
   }
 
   renderLeaderboard(); renderModelList(); drawRadar(); initControls();
 })();
 </script>
+
+<!-- ========== Eval Process Viewer (drop-in section) ========== -->
+<section id="eval-process" class="epv">
+  <div class="epv__head">
+    <h2>Visualization of the Evaluation Process (Real-world Cases)</h2>
+    <div class="epv__controls">
+      <label>Task
+        <select id="epv-task">
+          <option value="generation">generation</option>
+          <option value="completion">completion</option>
+          <option value="translation">translation</option>
+          <option value="interpretation_logic">interpretation_logic</option>
+          <option value="interpretation_notation">interpretation_notation</option>
+          <option value="correction_false">correction_false</option>
+          <option value="correction_error">correction_error</option>
+        </select>
+      </label>
+      <label>Language
+        <select id="epv-lang"></select>
+      </label>
+      <label>Model
+        <select id="epv-model"></select>
+      </label>
+      <button id="epv-reload" class="epv__btn" title="Reload from JSON">↻</button>
+    </div>
+    <div id="epv-toast" class="epv__toast" aria-live="polite"></div>
+  </div>
+
+  <div class="epv__pipeline">
+    <article class="epv__card">
+      <header>① Dataset Content <small>(inputdata)</small></header>
+      <div class="epv__kv">
+        <div><b style="margin-right: 10px;">file</b><span id="epv-file">—</span></div>
+      </div>
+      <pre class="epv__code"><code id="epv-inputdata">—</code></pre>
+    </article>
+
+    <article class="epv__card">
+      <header>② Prompt <small>(prompt)</small></header>
+      <pre class="epv__code"><code id="epv-prompt">—</code></pre>
+    </article>
+
+    <article class="epv__card">
+      <header>③ Model Input <small>(modelinput)</small></header>
+      <pre class="epv__code"><code id="epv-modelinput">—</code></pre>
+    </article>
+
+    <article class="epv__card">
+      <header>④ Model Output <small>(modeloutput)</small></header>
+      <pre class="epv__code"><code id="epv-modeloutput">—</code></pre>
+    </article>
+
+    <article class="epv__card">
+      <header>⑤ Eval Result <small>(evalresult)</small></header>
+      <pre class="epv__code"><code id="epv-evalresult">—</code></pre>
+    </article>
+  </div>
+</section>
+
+<style>
+  .epv{--epv-accent:#22d3ee;--epv-fg:var(--fg,#e5e7eb);--epv-bg:var(--bg,#0b1220);--epv-muted:#94a3b8}
+  .epv{margin:2rem 0;padding:1rem;border-radius:12px;background:linear-gradient(180deg,rgba(34,211,238,.08),transparent);}
+  .epv__head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:1rem;justify-content:space-between}
+  .epv__controls{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+  .epv__controls label{font-size:.9rem;display:flex;flex-direction:column;gap:.4rem;color:var(--epv-muted)}
+  .epv__controls select{min-width:13ch;padding:.5rem .6rem;border-radius:8px;border:1px solid #1f2a44;background:#0a1427;color:var(--epv-fg)}
+  .epv__btn{padding:.55rem .8rem;border-radius:8px;border:1px solid #1f2a44;background:#0a1427;color:var(--epv-fg);cursor:pointer}
+  .epv__btn:hover{border-color:var(--epv-accent)}
+  .epv__toast{min-height:1.2rem;font-size:.85rem;color:#a5f3fc}
+  .epv__pipeline{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:1rem;margin-top:1rem}
+  @media(min-width:900px){.epv__pipeline{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .epv__card{background:rgba(2,6,23,.55);border:1px solid #142038;border-radius:12px;overflow:hidden}
+  .epv__card header{padding:.75rem 1rem;border-bottom:1px solid #142038;background:rgba(2,6,23,.66);font-weight:600}
+  .epv__kv{display:grid;grid-template-columns:auto 1fr;gap:.4rem 1rem;padding: .75rem 1rem}
+  .epv__kv b{font-weight:600;color:var(--epv-muted)}
+  .epv__kv span{color:var(--epv-fg)}
+  .epv__code{margin:0;padding:1rem;max-height:320px;overflow:auto;background:#0b1220}
+  .epv__code code{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88rem;line-height:1.35}
+  .epv .hl {color:#a5f3fc}
+</style>
+
+<script>
+(() => {
+  const BASE_PATH = './html/'; // 如果你的 JSON 不在 html/，改这里
+  const TASK_FILES = {
+    generation: 'generation.json',
+    completion: 'completion.json',
+    translation: 'translation.json',
+    interpretation_logic: 'interpretation_logic.json',
+    interpretation_notation: 'interpretation_notation.json',
+    correction_false: 'correction_false.json',
+    correction_error: 'correction_error.json'
+  };
+
+  const DEFAULTS = {
+    task: 'generation',
+    lang: 'spdl', // 若不存在会回退
+    model: 'llama4-maverick-instruct-basic'
+  };
+
+  const els = {
+    task: document.getElementById('epv-task'),
+    lang: document.getElementById('epv-lang'),
+    model: document.getElementById('epv-model'),
+    reload: document.getElementById('epv-reload'),
+    toast: document.getElementById('epv-toast'),
+    file: document.getElementById('epv-file'),
+    inputdata: document.getElementById('epv-inputdata'),
+    prompt: document.getElementById('epv-prompt'),
+    modelinput: document.getElementById('epv-modelinput'),
+    modeloutput: document.getElementById('epv-modeloutput'),
+    evalresult: document.getElementById('epv-evalresult')
+  };
+
+  const state = {
+    datasets: {},   // {task: jsonContent}
+    task: DEFAULTS.task,
+    lang: DEFAULTS.lang,
+    model: DEFAULTS.model
+  };
+
+  // ---------- utils ----------
+  // ----- helpers for structure-agnostic parsing -----
+  function isModelRecord(v){
+    return v && typeof v === 'object' && !Array.isArray(v) &&
+      ('filename' in v || 'inputdata' in v || 'prompt' in v || 'modelinput' in v || 'modeloutput' in v || 'evalresult' in v);
+  }
+  function looksLikeLangMap(node){
+    if (!node || typeof node !== 'object' || Array.isArray(node)) return false;
+    for (const k of Object.keys(node)){
+      const v = node[k];
+      if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+      const mk = Object.keys(v)[0];
+      if (mk && isModelRecord(v[mk])) return true;
+    }
+    return false;
+  }
+  /** Accept any root; return the language layer: { lang : { model : record } } */
+  function unwrapToLangMap(json){
+    let node = json;
+    let guard = 0;
+    while (guard < 4 && node && typeof node === 'object' && !Array.isArray(node) && Object.keys(node).length === 1){
+      const k = Object.keys(node)[0];
+      const next = node[k];
+      if (typeof next === 'object' && next) { node = next; guard++; } else break;
+    }
+    if (!looksLikeLangMap(node) && looksLikeLangMap(json)) return json;
+    return node;
+  }
+  function prettyMaybeJson(v){
+    if (typeof v === 'string') {
+      try { return JSON.stringify(JSON.parse(v), null, 2); } catch { return v; }
+    }
+    if (v == null) return '—';
+    try { return JSON.stringify(v, null, 2); } catch { return String(v); }
+  }
+
+  const toast = (msg) => { els.toast.textContent = msg || ''; };
+  const safeString = (v) => (typeof v === 'string' ? v : JSON.stringify(v, null, 2));
+  // const prettyMaybeJson = (text) => {
+  //   if (typeof text !== 'string') return JSON.stringify(text, null, 2);
+  //   try { return JSON.stringify(JSON.parse(text), null, 2); } catch { return text; }
+  // };
+  const fetchJson = async (url) => {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  };
+
+  // ---------- data loading ----------
+  async function loadAll() {
+    const entries = Object.entries(TASK_FILES);
+    const ok = [], fail = [];
+    const results = await Promise.allSettled(
+      entries.map(([task, file]) => fetchJson(BASE_PATH + file))
+    );
+    const datasets = {};
+    results.forEach((r, idx) => {
+      const [task] = entries[idx];
+      if (r.status === 'fulfilled' && r.value) {
+        datasets[task] = unwrapToLangMap(r.value); // 只保留语言层
+        ok.push(task);
+      } else {
+        fail.push(task);
+      }
+    });
+    state.datasets = datasets;
+
+    // 只展示加载成功的任务
+    els.task.innerHTML = '';
+    ok.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t; opt.textContent = t;
+      els.task.appendChild(opt);
+    });
+    if (!ok.length) throw new Error('No task JSON loaded. Please check file paths or deployment.');
+
+    state.task = ok.includes(state.task) ? state.task : ok[0];
+    els.task.value = state.task;
+
+    if (fail.length) toast('Missing tasks: ' + fail.join(', '));
+    else toast('');
+  }
+
+  // ---------- selectors population ----------
+  function populateLangAndModel() {
+    const langRoot = state.datasets[state.task] || {}; // 已是语言层
+    const langs = Object.keys(langRoot);
+
+    // language
+    let lang = state.lang;
+    if (!langRoot[lang]) {
+      lang = langs[0] || '';
+      if (state.lang && state.lang !== lang) toast('Language "' + state.lang + '" not available. Switched to "' + lang + '".');
+      state.lang = lang;
+    }
+    els.lang.innerHTML = '';
+    langs.forEach(l => {
+      const opt = document.createElement('option');
+      opt.value = l; opt.textContent = l;
+      if (l === state.lang) opt.selected = true;
+      els.lang.appendChild(opt);
+    });
+
+    // model
+    const models = Object.keys(langRoot[state.lang] || {});
+    let model = state.model;
+    if (!models.includes(model)) {
+      model = models[0] || '';
+      if (state.model && state.model !== model) toast('Model "' + state.model + '" not under "' + state.lang + '". Switched to "' + model + '".');
+      state.model = model;
+    }
+    els.model.innerHTML = '';
+    models.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m; opt.textContent = m;
+      if (m === state.model) opt.selected = true;
+      els.model.appendChild(opt);
+    });
+
+    if (langs.length) toast('Available languages: ' + langs.join(', '));
+  }
+
+  // ---------- rendering ----------
+  function render() {
+    const langRoot = state.datasets[state.task] || {};
+    const record = (langRoot[state.lang] || {})[state.model] || {};
+
+    // file: from record.filename (JSON model layer), not inputdata.file
+    els.file.textContent = record.filename || '—';
+
+    // Dataset Content: show entire inputdata (object/string)
+    els.inputdata.textContent = prettyMaybeJson(record.inputdata ?? '—');
+
+    // Others
+    els.prompt.textContent      = prettyMaybeJson(record.prompt ?? '—');
+    els.modelinput.textContent  = prettyMaybeJson(record.modelinput ?? '—');
+    els.modeloutput.textContent = typeof record.modeloutput === 'string' ? record.modeloutput : prettyMaybeJson(record.modeloutput ?? '—');
+    els.evalresult.textContent  = prettyMaybeJson(record.evalresult ?? '—');
+  }
+
+  // ---------- events ----------
+  els.task.addEventListener('change', () => {
+    state.task = els.task.value;
+    toast('');
+    populateLangAndModel();
+    render();
+  });
+  els.lang.addEventListener('change', () => {
+    state.lang = els.lang.value;
+    toast('');
+    populateLangAndModel(); // 语言变化后刷新模型列表
+    render();
+  });
+  els.model.addEventListener('change', () => {
+    state.model = els.model.value;
+    toast('');
+    render();
+  });
+  els.reload.addEventListener('click', async () => {
+    toast('Reloading…');
+    await loadAll();
+    populateLangAndModel();
+    render();
+    toast('✅ Reloaded from JSON.');
+  });
+
+  // ---------- boot ----------
+  (async function boot(){
+    try {
+      await loadAll();
+      // 设置默认任务选择器（如果有有效数据）
+      if (state.datasets[state.task]) {
+        els.task.value = state.task;
+      } else {
+        const firstTask = Object.keys(state.datasets)[0];
+        if (firstTask) els.task.value = state.task = firstTask;
+      }
+      populateLangAndModel();
+      render();
+      // 若默认语言/模型确实命中则提示为空；否则 toast 已在 populate 中提示
+      if (!els.toast.textContent) toast('✅ Loaded: ' + state.task + ' / ' + state.lang + ' / ' + state.model);
+      } catch(e){
+        console.error(e);
+        toast('Failed to load. Please check JSON paths or console.');
+      }
+  })();
+})();
+</script>
+<!-- ========== /Eval Process Viewer ========== -->
+
+<!-- ===== Demo Video (place before </body>) ===== -->
+<section id="demo-video" class="demo-video" aria-labelledby="demo-video-title">
+  <h2 id="demo-video-title">Demo: Generation (grok-3)</h2>
+
+  <!-- Responsive 16:9 container -->
+  <div class="video-box">
+    <!-- Primary attempt: inline via <object> -->
+    <object
+      data="./html/generation_grok-3.mp4"
+      type="video/mp4"
+      width="100%" height="100%"
+      aria-label="generation_grok-3 (inline)">
+      <!-- Fallback 1: try <embed> -->
+      <embed src="./html/generation_grok-3.mp4" type="video/mp4" width="100%" height="100%">
+      <!-- Fallback 2: show a poster-like link (opens the MP4 in a new tab) -->
+      <a class="video-fallback" href="./html/generation_grok-3.mp4" target="_blank" rel="noopener">
+        ▶ Open video (MP4)
+      </a>
+    </object>
+  </div>
+
+  <!-- Always-visible final fallback / download -->
+  <p class="video-note">
+    Can’t play inline? <a href="./html/generation_grok-3.mp4" target="_blank" rel="noopener">Open in a new tab</a>
+    or <a href="./html/generation_grok-3.mp4" download>Download the video</a>.
+  </p>
+
+  <noscript>
+    <p><a href="./html/generation_grok-3.mp4">Download the video</a></p>
+  </noscript>
+</section>
+
+<style>
+  .demo-video { margin: 2rem 0; }
+  .demo-video h2 { margin: 0 0 .75rem; }
+  /* Aspect ratio wrapper (16:9) */
+  .video-box {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid #142038;
+    border-radius: 12px;
+  }
+  .video-box object,
+  .video-box embed,
+  .video-box iframe {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    border: 0; display: block;
+    background: #000;
+  }
+  .video-fallback {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; text-decoration: none;
+    background: linear-gradient(0deg, rgba(0,0,0,.65), rgba(0,0,0,.65));
+    font-weight: 600;
+    letter-spacing: .2px;
+  }
+  .video-fallback:hover { text-decoration: underline; }
+  .video-note { font-size: .9rem; opacity: .85; margin-top: .5rem; }
+  @media (prefers-reduced-motion: reduce) { .video-box { animation: none !important; } }
+</style>
+
+<footer class="footer">
+  <p>© 2025 CrypFormBench • Reproducibility First.</p>
+</footer>
+
 </body>
 </html>
