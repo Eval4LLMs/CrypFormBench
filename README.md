@@ -20,7 +20,7 @@
 ## 🔗 Quick Links
 
 - **[Leaderboard Snapshot]()** · **[Datasets**]()** · **[Quick Start]()** · **[Reproduce the Benchmark]()** · **[Evaluate a New Model]()**
-- **[Repository Layout]()** · **[Data Formats]()** · [Results & Figures]()**
+- **[Repository Layout]()** · **[Data Formats]()** · **[Results & Figures]()**
 - **[References]()** · **[FAQ]()**
 
 ---
