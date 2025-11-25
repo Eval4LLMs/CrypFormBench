@@ -1,0 +1,4 @@
+**Woo and Lam Mutual Authentication Protocol Description**\n===========================================================
+
+
+To add the notation to the given SPDL file without changing the original code and ensuring it remains semantically correct and runnable by Scyther, we will focus on adding comments and possibly additional claims or variables if necessary for notation purposes. The original code is well-structured and follows the Woo and Lam Mutual Authentication protocol as described.\n\nHere's how you can modify the file:\n\n```spdl
