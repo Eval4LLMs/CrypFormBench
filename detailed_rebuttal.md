@@ -14,10 +14,10 @@ We appreciate R1’s positive assessment of the contribution, dataset quality, a
 
 | Config ID                    | w_gen | w_comp | w_trans | w_corr | w_interp | α (logic) | β (annotation) | λ_err | λ_false | γ   |
 | -------------------------------- | ----- | ------ | ------- | ------ | -------- | --------- | -------------- | ----- | ------- | --- |
-| C1-Default                   | 0.25  | 0.20   | 0.25    | 0.15   | 0.15     | 0.50      | 0.50           | 0.40  | 0.60    | 1.0 |
-| C2-Uniform                   | 0.20  | 0.20   | 0.20    | 0.20   | 0.20     | 0.50      | 0.50           | 0.40  | 0.60    | 1.0 |
-| C3-GenTransHeavy             | 0.30  | 0.15   | 0.30    | 0.10   | 0.15     | 0.50      | 0.50           | 0.40  | 0.60    | 1.0 |
-| C4-InterpShift + WeakPenalty | 0.25  | 0.20   | 0.20    | 0.15   | 0.20     | 0.60      | 0.40           | 0.50  | 0.50    | 0.5 |
+| C1-Default                   | 0.25  | 0.20   | 0.25    | 0.15   | 0.15     | 0.30      | 0.30           | 0.40  | 0.60    | 1.0 |
+| C2-Uniform                   | 0.20  | 0.20   | 0.20    | 0.20   | 0.20     | 0.30      | 0.30           | 0.40  | 0.60    | 1.0 |
+| C3-GenTransHeavy             | 0.30  | 0.15   | 0.30    | 0.10   | 0.15     | 0.30      | 0.30           | 0.40  | 0.60    | 1.0 |
+| C4-InterpShift + WeakPenalty | 0.25  | 0.20   | 0.20    | 0.15   | 0.20     | 0.40      | 0.20           | 0.50  | 0.50    | 0.5 |
 
  The above table summarizes four configurations of the scoring parameters, including task weights, interpretation sub-weights (α, β), correction sub-weights (λ_err, λ_false), and the analyzability penalty γ. For each configuration, we recompute all per-task scores and overall scores.
 
@@ -96,7 +96,6 @@ Few-shot examples mainly help the model reproduce the scaffolding of each tool l
   <img src="rebuttal_fig/ratio_task.png" width="400" />
   <img src="rebuttal_fig/accuracy_task.png" width="400" />
 </p>
-
 **A3. Fine-grained analysis of security properties.**
 
 > *Q3. Although the dataset includes 160 security properties, the paper mainly focuses on overall task-level evaluation and does not provide a detailed analysis of the validation results for individual security properties. While the dataset includes multiple security properties, the paper focuses mainly on task-level performance without detailed analysis of the results for different properties. Is this analysis necessary? Is there further consideration for granular analysis of security properties?*
@@ -246,11 +245,11 @@ Additionally, the corresponding label-predict pairs including logic and notation
 | Claude-3.5-Sonnet-Coder | 51.0                 | 56.8                 | 46.1                  | 56.5               |
 | Grok-3                  | 18.0                 | 19.8                 | 16.8                  | 21.0               |
 
-**B3. Few-shot prompt and fine-turn strategies.**
+**B4. Few-shot prompt and fine-turn strategies.**
 
-> *Q3. Improvements to LLM.*
+> *Q4. Improvements to LLM.*
 
-**B3.1. Effectiveness of few-shot prompt.**
+**B4.1. Effectiveness of few-shot prompt.**
 
  Thanks for asking about the impact of few-shot prompting. We have run a systematic 0/1/2/3-shot ablation on 10% of the dataset. The table below summarizes the average analyzable ratio and accuracy:
 
@@ -274,8 +273,7 @@ Few-shot examples mainly help the model reproduce the scaffolding of each tool l
   <img src="rebuttal_fig/fewshot_analyz.png" width="400" />
   <img src="rebuttal_fig/fewshot_acc.png" width="400" />
 </p>
-
-**B3.2. Effectiveness of fine-tuning.**
+**B4.2. Effectiveness of fine-tuning.**
 
  To address the reviewer’s concern about whether the benchmark can also guide model improvement, we additionally fine-tune an open-source model, Qwen2.5-Coder-3B, using our benchmark data. For each task and tool language, we split the instances into 90% for LoRA fine-tuning and 10% for held-out evaluation, and trained a LoRA adapter on a single RTX 4090 GPU for 3 epochs.
 
@@ -300,16 +298,15 @@ Few-shot examples mainly help the model reproduce the scaffolding of each tool l
   <img src="rebuttal_fig/ratio_task.png" width="400" />
   <img src="rebuttal_fig/accuracy_task.png" width="400" />
 </p>
+**B5. Specification and deep insights of the transformation task.**
 
-**B4. Specification and deep insights of the transformation task.**
-
-> *Q4. Transformation task under-specified: The conclusions may reflect prompt format/decoder settings more than fundamental capability; there is little exploration (grammar constraints, constrained decoding, exemplars).*
+> *Q5. Transformation task under-specified: The conclusions may reflect prompt format/decoder settings more than fundamental capability; there is little exploration (grammar constraints, constrained decoding, exemplars).*
 
  Thank you for pointing this out. We will clarify the transformation task in the camera-ready version. Firstly, in CrypFormBench, each transformation instance consists of a source formalization and a target formalization of the same protocol and property set, across two of the same (e.g., CV → OCV) or different (e.g., SPDL → SPTHY) tools. The full translation graph (number of pairs per direction) is documented in our repository (protocol_translation_nums.png) and will be summarized in the paper. Regarding the transform pairs, they meet (i) model the same scheme and adversary, and (ii) agree on the final verdict (SAFE/UNSAFE) in our canonical ground truth. The model receives the source code plus its description and is asked to produce the target-language code. The output is then executed by the target tool, and we evaluate analyzability and whether the verdict matches the results of the original language. 
 
- Secondly, the transformation task is genuinely harder than generation and completion. As shown in Table 5 (§5.6), almost all models produce very few analyzable target files. A key reason is that the prompt for this task contains both the source-language code and its logic description, which often interferes with the model’s memory of the target-language syntax: in many cases, the model simply copies large fragments of the source specification, which is syntactically invalid for the target tool. Moreover, different tools encode the same operation in very different ways (e.g., `Out(msg)` in Tamarin versus `send_1(A, B, msg)` in Scyther), so naive token-level copying almost always breaks compilation. Even among the few transformed files that do compile, we observe that most of them time out during analysis. Manual inspection shows that they frequently contain redundant or ill-structured code. For example, unnecessary nested encryptions such as `enc(enc(a, k1), k2)` in Maude can trigger exponential term rewriting and non-termination, while omitting small but crucial fragments (e.g., the Maude clause `:: nil :: [ +(null), nil ] &`) also leads to infinite rewrite loops. These issues indicate that the models are still unable to distill the core protocol logic from the original formal files under the transformation task. Additionally, as detailed in §5.8, there are also semantic, structural,  formatting errors, missing or reordered protocol steps, incorrect channel types, lost freshness/binding conditions, and mismatched security goals on the target side. This suggests that the difficulty comes from preserving both syntax and semantics across two heterogeneous tools.
+ Secondly, the transformation task is genuinely harder than generation and completion. Figure 7 (§5.6) shows the numbers of transformation instances. It depicts that almost all models produce very few analyzable target files. A key reason is that the prompt for this task contains both the source-language code and its logic description, which often interferes with the model’s memory of the target-language syntax: in many cases, the model simply copies large fragments of the source specification, which is syntactically invalid for the target tool. Moreover, different tools encode the same operation in very different ways (e.g., `Out(msg)` in Tamarin versus `send_1(A, B, msg)` in Scyther), so naive token-level copying almost always breaks compilation. Even among the few transformed files that do compile, we observe that most of them time out during analysis. Manual inspection shows that they frequently contain redundant or ill-structured code. For example, unnecessary nested encryptions such as `enc(enc(a, k1), k2)` in Maude can trigger exponential term rewriting and non-termination, while omitting small but crucial fragments (e.g., the Maude clause `:: nil :: [ +(null), nil ] &`) also leads to infinite rewrite loops. These issues indicate that the models are still unable to distill the core protocol logic from the original formal files under the transformation task. Additionally, as detailed in §5.8, there are also semantic, structural,  formatting errors, missing or reordered protocol steps, incorrect channel types, lost freshness/binding conditions, and mismatched security goals on the target side. This suggests that the difficulty comes from preserving both syntax and semantics across two heterogeneous tools.
 
-**B5. Low analyzability beyond prompt/decoder choices.**
+**B6. Low analyzability beyond prompt/decoder choices.**
 
 > *Q5. Analysis of low analyzability beyond prompt/decoder choices.*
 
@@ -319,7 +316,7 @@ Few-shot examples mainly help the model reproduce the scaffolding of each tool l
 
  We did experiment with alternative prompts (including few-shot with 1–3 complete examples per tool) and fine-turn strategies. These changes do improve analyzability slightly for some languages, but the relative pattern remains stable: SCYTHER/SPDL and SPTHY are consistently easier to parse than Maude-NPA, EasyCrypt, or CryptoVerif; generation and transformation remain substantially harder than completion and interpretation. This indicates that low analyzability is a robust property of current LLMs’ ability to produce structurally correct and semantically well-formed models for these tools.
 
-**B6. Disagreement between verifiers and ground truth.**
+**B7. Disagreement between verifiers and ground truth.**
 
 > *Q7. Did you observe cases where different verifiers disagree (e.g., PV vs SPTHY) on the same scheme? How are such conflicts handled in the ground truth?*
 
@@ -335,7 +332,7 @@ Few-shot examples mainly help the model reproduce the scaffolding of each tool l
 
  The harness we release already collects attack traces and verdicts from multiple tools; in future work, LLMs could be used to summarize and compare attack paths across tools, helping researchers understand whether disagreements are due to modeling choices, property definitions, or genuine semantic differences.
 
-**B7. Qualitative case studies on failure types per language and actionable insights.**
+**B8. Qualitative case studies on failure types per language and actionable insights.**
 
 > *Q7. Qualitative case studies diagnosing why languages differ. Beyond aggregate scores, can you categorize dominant failure types per language (e.g., missing freshness, wrong binding, incorrect adversary assumption) to yield actionable insights?*
 
@@ -363,13 +360,13 @@ For computational tools such as EasyCrypt and CryptoVerif, the typical errors in
 
  We will incorporate this taxonomy into §5.8 in the camera-ready version, together with illustrative examples for each tool family. Beyond explaining why models fail, this analysis suggests concrete directions for making LLM-based tools more useful in practice: for symbolic tools, prompts and training data should emphasize faithful intruder and protocol-role modeling as well as explicit freshness/binding constraints; for computational tools, guidance should focus on correct game setup, disciplined game hops, and precise event/bad-event specifications. Importantly, these failure modes are consistent across languages and do not change the relative ranking of models, but they highlight where future systems should invest effort to improve reliability.
 
-**B8. Citations and typos.**
+**B9. Citations and typos.**
 
 > *Q8. In terms of presentation, the paper uses a lot of cryptography terms which might be hard for a non-expert to grasp and there also seem to be missing citations for example in the adversary models paragraph on page 6. Typos in the paper: Conetext -> context (line 617) code -> code (line 676) virous -> various (line 156)*
 
  Thank you for pointing this out; in the final version, we will add brief explanations (or a short glossary) for key cryptographic terms and include the missing citations, e.g., in the adversary-models paragraph. We will also carefully proofread the paper and fix the reported typos (“Conetext”, “code”, “virous”) and any similar issues.
 
-**B9. Reproducibility, dataset and harness release.**
+**B10. Reproducibility, dataset and harness release.**
 
 > *Q9. It’s unclear whether the full dataset, prompts, and test harness will be released with licensing details for collected corpora. (I may have missed it; please clarify.) Potential impact is higher if datasets, harness, and prompts are released with clear licensing and if disagreement resolution across tools is addressed. Will you release the full dataset, prompts, pre/post-processing scripts, and the multi-tool harness?*
 
@@ -459,7 +456,7 @@ Furthermore, to reassure that the embedding-based score for similarity calculati
 
 > *Q5. The presentation of the paper could be improved. An example would definitely help readers better understand the problem. The way the metric is discussed is hard to follow and could be better presented.*
 
-In the camera-ready, we will polish the wording throughout to reduce cryptography-specific jargon where possible or explain it inline, to make the paper more accessible to non-experts.
+In the camera-ready, we will polish the wording throughout to reduce cryptography-specific jargon where possible or explain it inline, to make the paper more accessible to non-experts. Also, the description of examples is added in Section .
 
 **C6. Fine-tuning and few-shot strategies.**
 

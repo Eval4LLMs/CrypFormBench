@@ -1,1 +1,92 @@
-{"deepseek-coder": {"num_analysis": 4, "num_generates": 99, "fp": 0, "fn": 1, "tn": 0, "num_timeout": 3, "tp": 0, "len": 100}, "grok-3-re": {"num_analysis": 17, "num_generates": 100, "fp": 0, "fn": 0, "tn": 0, "num_timeout": 17, "tp": 0, "len": 100}, "gpt-4o": {"num_analysis": 7, "num_generates": 99, "fp": 0, "fn": 0, "tn": 0, "num_timeout": 7, "tp": 0, "len": 100}, "glm-4-airx": {"num_analysis": 5, "num_generates": 90, "fp": 0, "fn": 0, "tn": 0, "num_timeout": 5, "tp": 0, "len": 100}, "gpt-4o-mini": {"num_analysis": 4, "num_generates": 100, "fp": 0, "fn": 0, "tn": 0, "num_timeout": 4, "tp": 0, "len": 100}, "deepseek-r1-250528": {"num_analysis": 8, "num_generates": 100, "fp": 0, "fn": 0, "tn": 0, "num_timeout": 8, "tp": 0, "len": 100}, "claude-3-5-sonnet-coder": {"num_analysis": 14, "num_generates": 100, "fp": 0, "fn": 5, "tn": 3, "num_timeout": 2, "tp": 4, "len": 100}, "llama4-maverick-instruct-basic": {"num_analysis": 0, "num_generates": 0, "fp": 0, "fn": 0, "tn": 0, "num_timeout": 0, "tp": 0, "len": 100}, "gemini-2.5-pro-exp-03-25": {"num_analysis": 3, "num_generates": 56, "fp": 0, "fn": 0, "tn": 0, "num_timeout": 3, "tp": 0, "len": 100}}
+{
+    "deepseek-coder": {
+        "num_analysis": 4,
+        "num_generates": 99,
+        "fp": 0,
+        "fn": 1,
+        "tn": 0,
+        "num_timeout": 3,
+        "tp": 0,
+        "len": 100
+    },
+    "grok-3-re": {
+        "num_analysis": 17,
+        "num_generates": 100,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "num_timeout": 17,
+        "tp": 0,
+        "len": 100
+    },
+    "gpt-4o": {
+        "num_analysis": 7,
+        "num_generates": 99,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "num_timeout": 7,
+        "tp": 0,
+        "len": 100
+    },
+    "glm-4-airx": {
+        "num_analysis": 5,
+        "num_generates": 90,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "num_timeout": 5,
+        "tp": 0,
+        "len": 100
+    },
+    "gpt-4o-mini": {
+        "num_analysis": 4,
+        "num_generates": 100,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "num_timeout": 4,
+        "tp": 0,
+        "len": 100
+    },
+    "deepseek-r1-250528": {
+        "num_analysis": 8,
+        "num_generates": 100,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "num_timeout": 8,
+        "tp": 0,
+        "len": 100
+    },
+    "claude-3-5-sonnet-coder": {
+        "num_analysis": 14,
+        "num_generates": 100,
+        "fp": 0,
+        "fn": 5,
+        "tn": 3,
+        "num_timeout": 2,
+        "tp": 4,
+        "len": 100
+    },
+    "llama4-maverick-instruct-basic": {
+        "num_analysis": 0,
+        "num_generates": 0,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "num_timeout": 0,
+        "tp": 0,
+        "len": 100
+    },
+    "gemini-2.5-pro-exp-03-25": {
+        "num_analysis": 3,
+        "num_generates": 56,
+        "fp": 0,
+        "fn": 0,
+        "tn": 0,
+        "num_timeout": 3,
+        "tp": 0,
+        "len": 100
+    }
+}

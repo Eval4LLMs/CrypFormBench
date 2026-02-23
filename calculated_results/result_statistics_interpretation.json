@@ -1,1 +1,650 @@
-{"glm-4-airx": {"cv": {"num_generates": 16, "num_analysis": 8, "fp": 0, "fn": 0, "len": 20, "tp": 4, "tn": 4, "num_timeout": 0}, "ec": {"num_generates": 10, "num_analysis": 0, "fp": 0, "fn": 0, "len": 20, "tp": 0, "tn": 0, "num_timeout": 0}, "spthy": {"num_generates": 13, "num_analysis": 3, "fp": 0, "fn": 1, "len": 20, "tp": 0, "tn": 1, "num_timeout": 1}, "maude": {"num_generates": 13, "num_analysis": 6, "fp": 0, "fn": 1, "len": 20, "tp": 0, "tn": 2, "num_timeout": 3}, "pv": {"num_generates": 12, "num_analysis": 3, "fp": 0, "fn": 0, "len": 20, "tp": 1, "tn": 2, "num_timeout": 0}, "hlpsl": {"num_generates": 11, "num_analysis": 3, "fp": 0, "fn": 0, "len": 20, "tp": 2, "tn": 1, "num_timeout": 0}, "spdl": {"num_generates": 18, "num_analysis": 13, "fp": 1, "fn": 0, "len": 20, "tp": 6, "tn": 6, "num_timeout": 0}}, "llama4-maverick-instruct-basic": {"cv": {"num_generates": 2, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "ec": {"num_generates": 2, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "spthy": {"num_generates": 0, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "maude": {"num_generates": 0, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "pv": {"num_generates": 5, "num_analysis": 4, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 2, "tn": 2, "len": 20}, "hlpsl": {"num_generates": 13, "num_analysis": 10, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 4, "tn": 6, "len": 20}, "spdl": {"num_generates": 10, "num_analysis": 7, "fp": 1, "fn": 0, "num_timeout": 0, "tp": 2, "tn": 4, "len": 20}}, "gpt-4o": {"cv": {"num_generates": 20, "num_analysis": 13, "fp": 0, "fn": 0, "len": 20, "tp": 5, "tn": 7, "num_timeout": 1}, "ec": {"num_generates": 20, "num_analysis": 13, "fp": 0, "fn": 0, "len": 20, "tp": 4, "tn": 9, "num_timeout": 0}, "spthy": {"num_generates": 20, "num_analysis": 19, "fp": 0, "fn": 0, "len": 20, "tp": 9, "tn": 10, "num_timeout": 0}, "maude": {"num_generates": 20, "num_analysis": 18, "fp": 0, "fn": 0, "len": 20, "tp": 8, "tn": 9, "num_timeout": 1}, "pv": {"num_generates": 20, "num_analysis": 18, "fp": 0, "fn": 0, "len": 20, "tp": 7, "tn": 11, "num_timeout": 0}, "hlpsl": {"num_generates": 20, "num_analysis": 16, "fp": 0, "fn": 0, "len": 20, "tp": 6, "tn": 10, "num_timeout": 0}, "spdl": {"num_generates": 20, "num_analysis": 16, "fp": 0, "fn": 0, "len": 20, "tp": 7, "tn": 9, "num_timeout": 0}}, "deepseek-r1-250528": {"cv": {"num_generates": 20, "num_analysis": 7, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 3, "tn": 4, "len": 20}, "ec": {"num_generates": 20, "num_analysis": 3, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 2, "tn": 1, "len": 20}, "spthy": {"num_generates": 20, "num_analysis": 3, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 3, "len": 20}, "maude": {"num_generates": 20, "num_analysis": 12, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 6, "tn": 6, "len": 20}, "pv": {"num_generates": 20, "num_analysis": 11, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 4, "tn": 7, "len": 20}, "hlpsl": {"num_generates": 20, "num_analysis": 11, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 5, "tn": 6, "len": 20}, "spdl": {"num_generates": 20, "num_analysis": 11, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 5, "tn": 6, "len": 20}}, "deepseek-coder": {"cv": {"num_generates": 20, "num_analysis": 19, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 9, "tn": 10, "len": 20}, "ec": {"num_generates": 13, "num_analysis": 11, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 2, "tn": 9, "len": 20}, "spthy": {"num_generates": 20, "num_analysis": 20, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 10, "tn": 10, "len": 20}, "maude": {"num_generates": 20, "num_analysis": 19, "fp": 0, "fn": 0, "num_timeout": 1, "tp": 10, "tn": 8, "len": 20}, "pv": {"num_generates": 20, "num_analysis": 20, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 8, "tn": 12, "len": 20}, "hlpsl": {"num_generates": 20, "num_analysis": 11, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 4, "tn": 7, "len": 20}, "spdl": {"num_generates": 20, "num_analysis": 20, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 9, "tn": 11, "len": 20}}, "grok-3-re": {"cv": {"num_generates": 20, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "ec": {"num_generates": 20, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "spthy": {"num_generates": 20, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "maude": {"num_generates": 20, "num_analysis": 2, "fp": 0, "fn": 1, "num_timeout": 1, "tp": 0, "tn": 0, "len": 20}, "pv": {"num_generates": 20, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "hlpsl": {"num_generates": 20, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}, "spdl": {"num_generates": 20, "num_analysis": 0, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 0, "len": 20}}, "gemini-2.5-pro-exp-03-25": {"cv": {"num_generates": 16, "num_analysis": 8, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 6, "tn": 2, "len": 20}, "ec": {"num_generates": 14, "num_analysis": 1, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 0, "tn": 1, "len": 20}, "spthy": {"num_generates": 14, "num_analysis": 5, "fp": 1, "fn": 0, "num_timeout": 0, "tp": 2, "tn": 2, "len": 20}, "maude": {"num_generates": 13, "num_analysis": 8, "fp": 0, "fn": 0, "num_timeout": 1, "tp": 3, "tn": 4, "len": 20}, "pv": {"num_generates": 17, "num_analysis": 9, "fp": 1, "fn": 0, "num_timeout": 0, "tp": 4, "tn": 4, "len": 20}, "hlpsl": {"num_generates": 13, "num_analysis": 8, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 4, "tn": 4, "len": 20}, "spdl": {"num_generates": 18, "num_analysis": 8, "fp": 3, "fn": 0, "num_timeout": 0, "tp": 4, "tn": 1, "len": 20}}, "gpt-4o-mini": {"cv": {"num_generates": 20, "num_analysis": 13, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 6, "tn": 7, "len": 20}, "ec": {"num_generates": 19, "num_analysis": 16, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 5, "tn": 11, "len": 20}, "spthy": {"num_generates": 20, "num_analysis": 18, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 9, "tn": 9, "len": 20}, "maude": {"num_generates": 20, "num_analysis": 18, "fp": 0, "fn": 0, "num_timeout": 4, "tp": 7, "tn": 7, "len": 20}, "pv": {"num_generates": 20, "num_analysis": 17, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 7, "tn": 10, "len": 20}, "hlpsl": {"num_generates": 20, "num_analysis": 9, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 5, "tn": 4, "len": 20}, "spdl": {"num_generates": 20, "num_analysis": 20, "fp": 0, "fn": 0, "num_timeout": 0, "tp": 9, "tn": 11, "len": 20}}, "claude-3-5-sonnet-coder": {"cv": {"num_generates": 20, "num_analysis": 17, "fp": 0, "fn": 0, "len": 20, "tp": 9, "tn": 8, "num_timeout": 0}, "ec": {"num_generates": 15, "num_analysis": 3, "fp": 0, "fn": 0, "len": 20, "tp": 3, "tn": 0, "num_timeout": 0}, "spthy": {"num_generates": 20, "num_analysis": 18, "fp": 0, "fn": 0, "len": 20, "tp": 9, "tn": 9, "num_timeout": 0}, "maude": {"num_generates": 20, "num_analysis": 19, "fp": 0, "fn": 0, "len": 20, "tp": 10, "tn": 8, "num_timeout": 1}, "pv": {"num_generates": 20, "num_analysis": 18, "fp": 0, "fn": 0, "len": 20, "tp": 7, "tn": 11, "num_timeout": 0}, "hlpsl": {"num_generates": 20, "num_analysis": 19, "fp": 0, "fn": 0, "len": 20, "tp": 7, "tn": 12, "num_timeout": 0}, "spdl": {"num_generates": 20, "num_analysis": 15, "fp": 1, "fn": 0, "len": 20, "tp": 9, "tn": 5, "num_timeout": 0}}}
+{
+    "glm-4-airx": {
+        "cv": {
+            "num_generates": 16,
+            "num_analysis": 8,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 4,
+            "tn": 4,
+            "num_timeout": 0
+        },
+        "ec": {
+            "num_generates": 10,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 0,
+            "tn": 0,
+            "num_timeout": 0
+        },
+        "spthy": {
+            "num_generates": 13,
+            "num_analysis": 3,
+            "fp": 0,
+            "fn": 1,
+            "len": 20,
+            "tp": 0,
+            "tn": 1,
+            "num_timeout": 1
+        },
+        "maude": {
+            "num_generates": 13,
+            "num_analysis": 6,
+            "fp": 0,
+            "fn": 1,
+            "len": 20,
+            "tp": 0,
+            "tn": 2,
+            "num_timeout": 3
+        },
+        "pv": {
+            "num_generates": 12,
+            "num_analysis": 3,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 1,
+            "tn": 2,
+            "num_timeout": 0
+        },
+        "hlpsl": {
+            "num_generates": 11,
+            "num_analysis": 3,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 2,
+            "tn": 1,
+            "num_timeout": 0
+        },
+        "spdl": {
+            "num_generates": 18,
+            "num_analysis": 13,
+            "fp": 1,
+            "fn": 0,
+            "len": 20,
+            "tp": 6,
+            "tn": 6,
+            "num_timeout": 0
+        }
+    },
+    "llama4-maverick-instruct-basic": {
+        "cv": {
+            "num_generates": 2,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "ec": {
+            "num_generates": 2,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "spthy": {
+            "num_generates": 0,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "maude": {
+            "num_generates": 0,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "pv": {
+            "num_generates": 5,
+            "num_analysis": 4,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 2,
+            "tn": 2,
+            "len": 20
+        },
+        "hlpsl": {
+            "num_generates": 13,
+            "num_analysis": 10,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 4,
+            "tn": 6,
+            "len": 20
+        },
+        "spdl": {
+            "num_generates": 10,
+            "num_analysis": 7,
+            "fp": 1,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 2,
+            "tn": 4,
+            "len": 20
+        }
+    },
+    "gpt-4o": {
+        "cv": {
+            "num_generates": 20,
+            "num_analysis": 13,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 5,
+            "tn": 7,
+            "num_timeout": 1
+        },
+        "ec": {
+            "num_generates": 20,
+            "num_analysis": 13,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 4,
+            "tn": 9,
+            "num_timeout": 0
+        },
+        "spthy": {
+            "num_generates": 20,
+            "num_analysis": 19,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 9,
+            "tn": 10,
+            "num_timeout": 0
+        },
+        "maude": {
+            "num_generates": 20,
+            "num_analysis": 18,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 8,
+            "tn": 9,
+            "num_timeout": 1
+        },
+        "pv": {
+            "num_generates": 20,
+            "num_analysis": 18,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 7,
+            "tn": 11,
+            "num_timeout": 0
+        },
+        "hlpsl": {
+            "num_generates": 20,
+            "num_analysis": 16,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 6,
+            "tn": 10,
+            "num_timeout": 0
+        },
+        "spdl": {
+            "num_generates": 20,
+            "num_analysis": 16,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 7,
+            "tn": 9,
+            "num_timeout": 0
+        }
+    },
+    "deepseek-r1-250528": {
+        "cv": {
+            "num_generates": 20,
+            "num_analysis": 7,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 3,
+            "tn": 4,
+            "len": 20
+        },
+        "ec": {
+            "num_generates": 20,
+            "num_analysis": 3,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 2,
+            "tn": 1,
+            "len": 20
+        },
+        "spthy": {
+            "num_generates": 20,
+            "num_analysis": 3,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 3,
+            "len": 20
+        },
+        "maude": {
+            "num_generates": 20,
+            "num_analysis": 12,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 6,
+            "tn": 6,
+            "len": 20
+        },
+        "pv": {
+            "num_generates": 20,
+            "num_analysis": 11,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 4,
+            "tn": 7,
+            "len": 20
+        },
+        "hlpsl": {
+            "num_generates": 20,
+            "num_analysis": 11,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 5,
+            "tn": 6,
+            "len": 20
+        },
+        "spdl": {
+            "num_generates": 20,
+            "num_analysis": 11,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 5,
+            "tn": 6,
+            "len": 20
+        }
+    },
+    "deepseek-coder": {
+        "cv": {
+            "num_generates": 20,
+            "num_analysis": 19,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 9,
+            "tn": 10,
+            "len": 20
+        },
+        "ec": {
+            "num_generates": 13,
+            "num_analysis": 11,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 2,
+            "tn": 9,
+            "len": 20
+        },
+        "spthy": {
+            "num_generates": 20,
+            "num_analysis": 20,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 10,
+            "tn": 10,
+            "len": 20
+        },
+        "maude": {
+            "num_generates": 20,
+            "num_analysis": 19,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 1,
+            "tp": 10,
+            "tn": 8,
+            "len": 20
+        },
+        "pv": {
+            "num_generates": 20,
+            "num_analysis": 20,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 8,
+            "tn": 12,
+            "len": 20
+        },
+        "hlpsl": {
+            "num_generates": 20,
+            "num_analysis": 11,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 4,
+            "tn": 7,
+            "len": 20
+        },
+        "spdl": {
+            "num_generates": 20,
+            "num_analysis": 20,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 9,
+            "tn": 11,
+            "len": 20
+        }
+    },
+    "grok-3-re": {
+        "cv": {
+            "num_generates": 20,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "ec": {
+            "num_generates": 20,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "spthy": {
+            "num_generates": 20,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "maude": {
+            "num_generates": 20,
+            "num_analysis": 2,
+            "fp": 0,
+            "fn": 1,
+            "num_timeout": 1,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "pv": {
+            "num_generates": 20,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "hlpsl": {
+            "num_generates": 20,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        },
+        "spdl": {
+            "num_generates": 20,
+            "num_analysis": 0,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 0,
+            "len": 20
+        }
+    },
+    "gemini-2.5-pro-exp-03-25": {
+        "cv": {
+            "num_generates": 16,
+            "num_analysis": 8,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 6,
+            "tn": 2,
+            "len": 20
+        },
+        "ec": {
+            "num_generates": 14,
+            "num_analysis": 1,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 0,
+            "tn": 1,
+            "len": 20
+        },
+        "spthy": {
+            "num_generates": 14,
+            "num_analysis": 5,
+            "fp": 1,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 2,
+            "tn": 2,
+            "len": 20
+        },
+        "maude": {
+            "num_generates": 13,
+            "num_analysis": 8,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 1,
+            "tp": 3,
+            "tn": 4,
+            "len": 20
+        },
+        "pv": {
+            "num_generates": 17,
+            "num_analysis": 9,
+            "fp": 1,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 4,
+            "tn": 4,
+            "len": 20
+        },
+        "hlpsl": {
+            "num_generates": 13,
+            "num_analysis": 8,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 4,
+            "tn": 4,
+            "len": 20
+        },
+        "spdl": {
+            "num_generates": 18,
+            "num_analysis": 8,
+            "fp": 3,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 4,
+            "tn": 1,
+            "len": 20
+        }
+    },
+    "gpt-4o-mini": {
+        "cv": {
+            "num_generates": 20,
+            "num_analysis": 13,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 6,
+            "tn": 7,
+            "len": 20
+        },
+        "ec": {
+            "num_generates": 19,
+            "num_analysis": 16,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 5,
+            "tn": 11,
+            "len": 20
+        },
+        "spthy": {
+            "num_generates": 20,
+            "num_analysis": 18,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 9,
+            "tn": 9,
+            "len": 20
+        },
+        "maude": {
+            "num_generates": 20,
+            "num_analysis": 18,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 4,
+            "tp": 7,
+            "tn": 7,
+            "len": 20
+        },
+        "pv": {
+            "num_generates": 20,
+            "num_analysis": 17,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 7,
+            "tn": 10,
+            "len": 20
+        },
+        "hlpsl": {
+            "num_generates": 20,
+            "num_analysis": 9,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 5,
+            "tn": 4,
+            "len": 20
+        },
+        "spdl": {
+            "num_generates": 20,
+            "num_analysis": 20,
+            "fp": 0,
+            "fn": 0,
+            "num_timeout": 0,
+            "tp": 9,
+            "tn": 11,
+            "len": 20
+        }
+    },
+    "claude-3-5-sonnet-coder": {
+        "cv": {
+            "num_generates": 20,
+            "num_analysis": 17,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 9,
+            "tn": 8,
+            "num_timeout": 0
+        },
+        "ec": {
+            "num_generates": 15,
+            "num_analysis": 3,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 3,
+            "tn": 0,
+            "num_timeout": 0
+        },
+        "spthy": {
+            "num_generates": 20,
+            "num_analysis": 18,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 9,
+            "tn": 9,
+            "num_timeout": 0
+        },
+        "maude": {
+            "num_generates": 20,
+            "num_analysis": 19,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 10,
+            "tn": 8,
+            "num_timeout": 1
+        },
+        "pv": {
+            "num_generates": 20,
+            "num_analysis": 18,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 7,
+            "tn": 11,
+            "num_timeout": 0
+        },
+        "hlpsl": {
+            "num_generates": 20,
+            "num_analysis": 19,
+            "fp": 0,
+            "fn": 0,
+            "len": 20,
+            "tp": 7,
+            "tn": 12,
+            "num_timeout": 0
+        },
+        "spdl": {
+            "num_generates": 20,
+            "num_analysis": 15,
+            "fp": 1,
+            "fn": 0,
+            "len": 20,
+            "tp": 9,
+            "tn": 5,
+            "num_timeout": 0
+        }
+    }
+}

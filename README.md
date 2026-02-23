@@ -47,8 +47,8 @@
     <tr>
       <td align="right">🥇 1</td>
       <td><b>Claude-3.5-Sonnet-Coder</b></td>
-      <td align="center"><b>51.0</b></td>
-      <td>██████████░░░░░░░░░ (51%)</td>
+      <td align="center"><b>48.7</b></td>
+      <td>██████████░░░░░░░░░ (49%)</td>
       <td><img src="https://img.shields.io/badge/Overall-51.0-2ea44f?labelColor=111" alt="51.0"></td>
     </tr>
     <tr>
@@ -187,7 +187,7 @@
 <!-- LEADERBOARD_CONVERT:BEGIN -->
 | Rank | Model                     | S_convert (recalc) |
 |:----:|---------------------------|:------------------:|
-| 🥇 1 | Claude-3.5-Sonnet-Coder   | **22.7**           |
+| 🥇 1 | Claude-3.5-Sonnet-Coder   | **13.3**           |
 | 2–9  | Others                    | 0.0                |
 
 <!-- LEADERBOARD_CONVERT:END -->

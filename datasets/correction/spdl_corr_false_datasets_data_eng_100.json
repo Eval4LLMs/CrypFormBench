@@ -96,5 +96,660 @@
                 2.409329414367676
             ]
         ]
+    },
+    {
+        "file": "SPDL-1/isoiec-9798-2-3.spdl",
+        "falsecode": "// (The above SPDL code would be placed here)",
+        "falseinfo": "However, the verification results of this file code illustrate that there were no security issues in the targeted protocol. This was a false negative, and there should be some problems with the protocol.",
+        "code": "/*\n * Modeled from ISO/IEC 9798\n * Modeler: Cas Cremers, Dec. 2010\n *\n * symmetric\n * two-pass\n * mutual\n *\n * Note: the identity inside the encryption may be ommitted, if\n *   (a) the environment disallows such attacks, or\n *   (b) a unidirectional key is used\n *\n */\nprotocol @keysymm-23(A,B)\n{\n\trole A\n\t{\n\t\tvar T: Nonce;\n\t\tvar Text: Ticket;\n\n\t\trecv_!1(B,A, { T, A, Text }k(A,B) );\n\t\tsend_!2(A,B, { T, A, Text }k(B,A) );\n\t}\n\trole B\n\t{\n\t\tvar T: Nonce;\n\t\tvar Text: Ticket;\n\n\t\trecv_!3(A,B, { T, B, Text }k(A,B) );\n\t\tsend_!4(B,A, { T, B, Text }k(B,A) );\n\t}\n}\n\nprotocol isoiec-9798-2-3(A,B)\n{\n\trole A\n\t{\n\t\tfresh TNA: Nonce;\n\t\tvar TNB: Nonce;\n\t\tfresh Text1,Text2: Ticket;\n\t\tvar Text3,Text4: Ticket;\n\n\t\tclaim(A,Running,B,TNA,Text1);\n\t\tsend_1(A,B, Text2, { TNA, B, Text1 }k(A,B) );\n\t\trecv_2(B,A, Text4, { TNB, A, Text3 }k(A,B) );\n\n\t\tclaim(A,Commit,B,TNB,Text3);\n\t\tclaim(A,Alive);\n\t\tclaim(A,Weakagree);\n\t}\n\trole B\n\t{\n\t\tvar TNA: Nonce;\n\t\tfresh TNB: Nonce;\n\t\tvar Text1,Text2: Ticket;\n\t\tfresh Text3,Text4: Ticket;\n\n\t\trecv_1(A,B, Text2, { TNA, B, Text1 }k(A,B) );\n\t\tclaim(B,Running,A,TNB,Text3);\n\t\tsend_2(B,A, Text4, { TNB, A, Text3 }k(A,B) );\n\n\t\tclaim(B,Commit,A,TNA,Text1);\n\t\tclaim(B,Alive);\n\t\tclaim(B,Weakagree);\n\t}\n}",
+        "logic": "To describe the protocols found in the provided SPDL file in a way that allows for the generation of the corresponding SPDL file, let's break down the contents and summarize the essential elements of the protocols.\n\n### Description of the Protocols\n\n#### 1. **Symmetric Two-Pass Mutual Authentication Protocol (keysymm-23)**\n\nThis protocol is modeled to facilitate mutual authentication between two parties, A and B, using symmetric encryption. The key aspects of this protocol are:\n\n- **Roles**: There are two roles, A and B, each representing a different party in the communication.\n- **Variables**:\n  - Each role utilizes a nonce (`T`) to ensure freshness and prevent replay attacks.\n  - Each role also handles a `Ticket` (`Text`) to manage session information.\n- **Message Flow**:\n  1. **Step 1**: Party A receives a message from B that includes the nonce, A's identity, and a ticket encrypted with a symmetric key derived from the shared secret between A and B.\n  2. **Step 2**: Party A responds by sending a message back to B, which includes the same nonce, A's identity, and the ticket, but encrypted with the key derived from B's perspective.\n  3. **Step 3**: Party B similarly receives the message from A, decrypts it, and sends back an acknowledgment containing the nonce, B's identity, and the ticket.\n  4. **Step 4**: Finally, Party B sends a response back to A, completing the mutual authentication process.\n\n#### 2. **ISO/IEC 9798-2 Mutual Authentication Protocol (isoiec-9798-2-3)**\n\nThis protocol is a more formalized structure based on the ISO/IEC 9798 standard for mutual authentication. It incorporates fresh nonces and allows the parties to claim their operational status. The key components include:\n\n- **Roles**: Similar to the first protocol, roles A and B represent the two parties.\n- **Variables**:\n  - Each role generates and uses fresh nonces (`TNA` for A and `TNB` for B).\n  - Each role manages multiple tickets (`Text1`, `Text2`, `Text3`, `Text4`) to facilitate the authentication process.\n- **Message Flow**:\n  1. **Step 1**: Party A generates a nonce (`TNA`) and sends a message to B containing another ticket (`Text2`), along with an encrypted message that includes `TNA`, B's identity, and a ticket (`Text1`).\n  2. **Step 2**: Party B receives A's message, retrieves the nonce and ticket, and sends back its nonce (`TNB`) along with an encrypted message containing its identity and the ticket from A.\n  3. **Claims**: Both parties make claims about their operational status (e.g., `Running`, `Commit`, `Alive`, `Weakagree`) at various points in the protocol to assert that the mutual authentication has taken place successfully.\n\n### Summary\n\nIn summary, both protocols emphasize mutual authentication through the use of nonces and symmetric keys. The first protocol (keysymm-23) is a simpler version that focuses on a two-pass authentication mechanism, while the second (isoiec-9798-2-3) adheres to a formal standard and includes additional claims to assert the status of the parties involved. \n\nThis description can be used as a basis for generating a corresponding SPDL file that follows the outlined processes and ensures mutual authentication between the parties involved.",
+        "results": [
+            true,
+            [
+                false,
+                [
+                    [
+                        "isoiec-9798-2-3",
+                        "A",
+                        "isoiec-9798-2-3,A2",
+                        "Commit B,TNB,Text3",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "isoiec-9798-2-3,A3",
+                        "Alive",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "isoiec-9798-2-3,A4",
+                        "Weakagree",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "B",
+                        "isoiec-9798-2-3,B2",
+                        "Commit A,TNA,Text1",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "isoiec-9798-2-3,B3",
+                        "Alive",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "isoiec-9798-2-3,B4",
+                        "Weakagree",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.22205781936645508
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/unknown2.spdl",
+        "falsecode": "protocol unknown2(I,R,S)\n{\n\trole I\n\t{\n\t\tfresh ni: Nonce;\t\t\t// Initiator's nonce\n\t\tfresh kir: Ticket;\t\t\t// Session key\n\t\tvar nr: Nonce;\t\t\t\t// Responder's nonce\n\t\tconst kIS: SessionKey;\t\t// Key shared between I and S\n\n\t\t// Message 1: I sends ni to R\n\t\tsend_1(I,R, ni);\n\n\t\t// Message 3: I receives encrypted message from S\n\t\trecv_3(S,I, {I,R,kir,ni,nr}kIS);\n\n\t\t// Message 4: I sends encrypted nr to R\n\t\tsend_4(I,R, {nr}kir);\n\n\t\t// Claims for Initiator\n\t\tclaim_i1(I, Nisynch);\n\t\tclaim_i2(I, Niagree);\n\t\tclaim_i3(I, Secret, kir);\n\t}\n\n\trole R\n\t{\n\t\tfresh nr: Nonce;\t\t\t// Responder's nonce\n\t\tvar ni: Nonce;\t\t\t\t// Initiator's nonce\n\t\tvar kir: Ticket;\t\t\t// Session key\n\t\tconst kRS: SessionKey;\t\t// Key shared between R and S\n\n\t\t// Message 1: R receives ni from I\n\t\trecv_1(I,R, ni);\n\n\t\t// Message 2: R sends encrypted message to S\n\t\tsend_2(R,S, {I,R,ni,nr}kRS);\n\n\t\t// Message 4: R receives encrypted nr from I\n\t\trecv_4(I,R, {nr}kir);\n\n\t\t// Claims for Responder\n\t\tclaim_r1(R, Nisynch);\n\t\tclaim_r2(R, Niagree);\n\t\tclaim_r3(R, Secret, kir);\n\t}\n\n\trole S\n\t{\n\t\tvar ni,nr: Nonce;\t\t\t// Nonces from I and R\n\t\tfresh kir: Ticket;\t\t\t// Session key\n\t\tconst kIS: SessionKey;\t\t// Key shared between I and S\n\t\tconst kRS: SessionKey;\t\t// Key shared between R and S\n\n\t\t// Message 2: S receives encrypted message from R\n\t\trecv_2(R,S, {I,R,ni,nr}kRS);\n\n\t\t// Message 3: S sends encrypted message to I\n\t\tsend_3(S,I, {I,R,kir,ni,nr}kIS);\n\n\t\t// No claims for Server (as per description)\n\t\t// claim_s1(S, Secret, kir);\n\t}\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there were no security issues in the targeted protocol. This was a false negative, and there should be some problems with the protocol.",
+        "code": "usertype SessionKey;\nsecret k: Function;\n\nprotocol unknown2(I,R,S)\n{\n\trole I\n\t{\n\t\tfresh ni: Nonce;\n\t\tvar nr: Nonce;\n\t\tvar kir: SessionKey;\n\t\tvar T;\n\n\t\tsend_1(I,R, ni );\n\t\trecv_3(S,I, { I,R,kir,ni,nr }k(I,S), T );\n\t\tsend_4(I,R, T, {nr}kir );\n\n\t\tclaim_i1(I,Nisynch);\n\t\tclaim_i2(I,Niagree);\n\t\tclaim_i3(I,Secret, kir);\n\t}\t\n\t\n\trole R\n\t{\n\t\tfresh nr: Nonce;\n\t\tvar ni: Nonce;\n\t\tvar kir: SessionKey;\n\n\t\trecv_1(I,R, ni );\n\t\tsend_2(R,S, { I,R,ni,nr }k(R,S) );\n\t\trecv_4(I,R, { I,R,kir,ni,nr }k(R,S), {nr}kir );\n\n\t\tclaim_r1(R,Nisynch);\n\t\tclaim_r2(R,Niagree);\n\t\tclaim_r3(R,Secret, kir);\n\t}\n\n\trole S\n\t{\n\t\tfresh kir: SessionKey;\n\t\tvar ni,nr: Nonce;\n\n\t\trecv_2(R,S, { I,R,ni,nr }k(R,S) );\n\t\tsend_3(S,I, { I,R,kir,ni,nr }k(I,S), { I,R,kir,ni,nr }k(R,S) );\n\n/*\n\t\tclaim_s1(S,Nisynch);\n\t\tclaim_s2(S,Niagree);\n\t\tclaim_s3(S,Secret, kir);\n\t\t*/\n\t}\n}\n\n\nconst kee: SessionKey;",
+        "logic": "---\n\n### Protocol Description: `unknown2`\n\nThe `unknown2` protocol involves three participants: initiator (I), responder (R), and server (S). The protocol facilitates secure communication among these participants using nonces and session keys. \n\n#### Participants:\n1. **Initiator (I)**: The party that starts the communication.\n2. **Responder (R)**: The party that responds to the initiator.\n3. **Server (S)**: The intermediary that assists in establishing a secure session between I and R.\n\n#### Key Components:\n- **Nonces**: `ni` and `nr` are fresh nonces generated by the initiator and responder, respectively, to ensure session uniqueness and prevent replay attacks.\n- **Session Key (kir)**: A secret key generated during the protocol execution for encrypting messages between parties.\n\n#### Message Flow:\n1. **Message 1**: \n   - `I` sends a nonce (`ni`) to `R`.\n   - This message initiates the communication and serves as a challenge to `R`.\n\n2. **Message 2**: \n   - Upon receiving `ni`, `R` generates its own nonce (`nr`) and creates a message containing `I`, `R`, `ni`, and `nr`, which is encrypted with a session key (`k(R,S)`) shared between `R` and `S`.\n   - `R` sends this encrypted message to `S`.\n\n3. **Message 3**: \n   - `S` receives the message from `R`, decrypts it, and creates a new message containing `I`, `R`, the session key (`kir`), and both nonces (`ni`, `nr`).\n   - This message is encrypted with a session key shared between `I` and `S` (`k(I,S)`) and is sent back to `I`.\n\n4. **Message 4**: \n   - `I` receives the message from `S`, decrypts it to learn the session key (`kir`) and the nonces.\n   - `I` sends a confirmation message to `R`, which includes the nonce `nr` encrypted with the session key (`kir`).\n\n#### Claims:\n- The protocol includes several claims that can be verified:\n  - **Claim i1** (`Nisynch`): Ensures that the initiator and responder are in sync regarding the session.\n  - **Claim i2** (`Niagree`): Ensures that both initiator and responder agree on the session parameters.\n  - **Claim i3** (`Secret`): Verifies that the session key (`kir`) is indeed kept secret between the parties.\n\n- **Responder Claims**:\n  - **Claim r1** (`Nisynch`): Similar to the initiator's claim, ensuring synchronization.\n  - **Claim r2** (`Niagree`): Agreement on session parameters.\n  - **Claim r3** (`Secret`): Confirms that the session key (`kir`) is secret.\n\n#### Additional Notes:\n- The role `S` also processes messages and facilitates the exchange between `I` and `R`, but it doesn't assert any claims in the current implementation (as noted by the commented-out claim lines).\n\n---",
+        "results": [
+            true,
+            [
+                false,
+                [
+                    [
+                        "unknown2",
+                        "I",
+                        "unknown2,i1",
+                        "Nisynch",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "unknown2,i2",
+                        "Niagree",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "unknown2,i3",
+                        "Secret kir",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "R",
+                        "unknown2,r1",
+                        "Nisynch",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "unknown2,r2",
+                        "Niagree",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "unknown2,r3",
+                        "Secret kir",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                1.136840581893921
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/nsl3-broken.spdl",
+        "falsecode": "// Needham-Schroeder-Lowe Protocol (Broken Version)\nprotocol needham-schroeder-lowe-broken(I, R) {\n    // Define roles\n    role I {\n        // Variables\n        fresh ni: Nonce;\n        var nr: Nonce;\n        const pk: Function;\n\n        // Protocol steps\n        // Broken: First message uses incorrect role name (R instead of I)\n        send_1(I, R, {R, ni}pk(R));\n        recv_2(R, I, {ni, nr, R}pk(I));\n        send_3(I, R, {nr}pk(R));\n\n        // Claims\n        claim_I1(I, Secret, ni);\n        claim_I2(I, Secret, nr);\n        claim_I3(I, Nisynch);\n        claim_I4(I, Niagree);\n    }\n\n    role R {\n        // Variables\n        var ni: Nonce;\n        fresh nr: Nonce;\n        const pk: Function;\n\n        // Protocol steps\n        recv_1(I, R, {R, ni}pk(R));\n        send_2(R, I, {ni, nr, R}pk(I));\n        recv_3(I, R, {nr}pk(R));\n\n        // Claims\n        claim_R1(R, Secret, ni);\n        claim_R2(R, Secret, nr);\n        claim_R3(R, Nisynch);\n        claim_R4(R, Niagree);\n    }\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there were no security issues in the targeted protocol. This was a false negative, and there should be some problems with the protocol.",
+        "code": "/* \n * Needham-Schroeder-Lowe protocol,\n * broken version (wrong role name in first message)\n */\n\n// The protocol description\n\nprotocol nsl3-broken(I,R)\n{\n\trole I\n\t{\n\t\tfresh ni: Nonce;\n\t\tvar nr: Nonce;\n\n\t\tsend_1(I,R, {R,ni}pk(R) );\n\t\trecv_2(R,I, {ni,nr,R}pk(I) );\n\t\tsend_3(I,R, {nr}pk(R) );\n\n\t\tclaim_i1(I,Secret,ni);\n\t\tclaim_i2(I,Secret,nr);\n\t\tclaim_i3(I,Niagree);\n\t\tclaim_i4(I,Nisynch);\n\t}\t\n\t\n\trole R\n\t{\n\t\tvar ni: Nonce;\n\t\tfresh nr: Nonce;\n\n\t\trecv_1(I,R, {R,ni}pk(R) );\n\t\tsend_2(R,I, {ni,nr,R}pk(I) );\n\t\trecv_3(I,R, {nr}pk(R) );\n\n\t\tclaim_r1(R,Secret,ni);\n\t\tclaim_r2(R,Secret,nr);\n\t\tclaim_r3(R,Niagree);\n\t\tclaim_r4(R,Nisynch);\n\t}\n}",
+        "logic": "The Needham-Schroeder-Lowe protocol is a classic authentication protocol designed to enable secure communication between two parties, traditionally referred to as Alice and Bob. The protocol relies on the use of public key cryptography to ensure the confidentiality and integrity of the messages exchanged between the parties.\n\nHere's a description of the protocol based on the provided SPDL file:\n\n---\n\n### Protocol Description: Needham-Schroeder-Lowe Protocol (Broken Version)\n\n**Overview:**\nThe Needham-Schroeder-Lowe protocol is an authentication protocol that facilitates secure communication between two parties, here represented as an initiator (I) and a responder (R). This implementation is a broken version of the original protocol due to a mistake in the role name in the first message.\n\n**Roles:**\n1. **Initiator (I):**\n   - The initiator starts the communication by generating a fresh nonce `ni`, which is a random number used only once for this session.\n   - The initiator sends a message to the responder containing its identity `R` and the nonce `ni`, encrypted with the responder's public key `pk(R)`.\n   - Upon receiving the second message from the responder, which contains the nonce `ni`, a new nonce `nr`, and the responder's identity `R`, the initiator decrypts this message and extracts the new nonce `nr`.\n   - The initiator then sends a final message to the responder containing the nonce `nr`, encrypted with the responder's public key `pk(R)`.\n   - The initiator makes several claims regarding the secrecy of the nonces and agreement on the values exchanged.\n\n2. **Responder (R):**\n   - The responder waits to receive the first message from the initiator, which contains the identity `R` and the nonce `ni`.\n   - Upon receipt, the responder extracts the nonce `ni` and generates a fresh nonce `nr`.\n   - The responder sends a message back to the initiator, which includes the nonce `ni`, the newly generated nonce `nr`, and its identity `R`, all encrypted with the initiator's public key `pk(I)`.\n   - The responder then waits for the final message from the initiator, which contains the nonce `nr`.\n   - Similar to the initiator, the responder asserts claims regarding the secrecy of the nonces and the agreement on the exchanged values.\n\n**Claims:**\n- Both roles make claims about the secrecy of the nonces and the agreement on the nonces exchanged during the protocol. These claims can be used to verify the correctness and security properties of the protocol.\n\n**Note:**\nThis version of the protocol is broken due to an incorrect role name in the first message. As a result, it may not provide the intended security guarantees, and vulnerabilities may arise during its execution.\n\n---\n\nThis description can be used as a basis for generating the corresponding SPDL file, ensuring that all elements of the protocol and its intended functionality are accurately represented.",
+        "results": [
+            true,
+            [
+                false,
+                [
+                    [
+                        "nsl3-broken",
+                        "I",
+                        "nsl3-broken,i1",
+                        "Secret ni",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "nsl3-broken,i2",
+                        "Secret nr",
+                        "Fail",
+                        "Falsified",
+                        "Exactly 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "nsl3-broken,i3",
+                        "Niagree",
+                        "Fail",
+                        "Falsified",
+                        "Exactly 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "nsl3-broken,i4",
+                        "Nisynch",
+                        "Fail",
+                        "Falsified",
+                        "Exactly 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "R",
+                        "nsl3-broken,r1",
+                        "Secret ni",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "nsl3-broken,r2",
+                        "Secret nr",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "nsl3-broken,r3",
+                        "Niagree",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "nsl3-broken,r4",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.2210378646850586
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/protocol1.spdl",
+        "falsecode": "/* \n * Protocol: protocol1\n * A symmetric key exchange protocol with nonce-based authentication\n * between an Initiator (I) and a Responder (R)\n */\n\n// Protocol identification\nprotocol protocol1(I, R)\n{\n    // Role declarations\n    role I\n    {\n        // Variable declarations\n        fresh ni: Nonce;    // Fresh nonce generated by I\n        var nr: Nonce;      // Nonce received from R\n\n        // Message sequence\n        send_1(I, R, {I, ni}pk(R));\n        recv_2(R, I, {R, ni, nr}pk(I));\n        send_3(I, R, {nr}pk(R));\n\n        // Security claims by Initiator\n        claim_i1(I, Secret, ni);  // Claim secrecy of ni\n        claim_i2(I, Secret, nr);  // Claim secrecy of nr\n        claim_i3(I, Nisynch);     // Claim non-injective synchronization\n    }\n\n    role R\n    {\n        // Variable declarations\n        var ni: Nonce;      // Nonce received from I\n        fresh nr: Nonce;    // Fresh nonce generated by R\n\n        // Message sequence\n        recv_1(I, R, {I, ni}pk(R));\n        send_2(R, I, {R, ni, nr}pk(I));\n        recv_3(I, R, {nr}pk(R));\n\n        // Security claims by Responder\n        claim_r1(R, Secret, ni);  // Claim secrecy of ni\n        claim_r2(R, Secret, nr);  // Claim secrecy of nr\n        claim_r3(R, Nisynch);     // Claim non-injective synchronization\n    }\n}\n\n// Default intruder knowledge\nusertype Nonce;\nconst pk: Function;",
+        "falseinfo": "However, the verification results of this file code illustrate that there were no security issues in the targeted protocol. This was a false negative, and there should be some problems with the protocol.",
+        "code": "/* \n * Broken protocol\n */\n\n// The protocol description\n\nprotocol protocol1(I,R)\n{\n\trole I\n\t{\n\t\tfresh ni: Nonce;\n\t\tvar nr: Nonce;\n\n\t\tsend_1(I, R, {R, ni}pk(R) );\n\t\t\n\t\trecv_2(R, I, {ni, nr, R}pk(I) );\n\t\t\n\t\tsend_3(I, R, {nr}pk(R) );\n\n\t\tclaim_i1(I,Secret,ni);\n\t\tclaim_i2(I,Secret,nr);\n\t\tclaim_i3(I,Nisynch);\n\t}\n\n\trole R\n\t{\n\t\tvar ni: Nonce;\n\t\tfresh nr: Nonce;\n\n\t\trecv_1(I,R, {R, ni}pk(R) );\n\t\t\n\t\tsend_2(R,I, {ni, nr, R}pk(I) );\n\t\t\n\t\trecv_3(I,R, {nr}pk(R) );\n\n\t\tclaim_r1(R,Secret,ni);\n\t\tclaim_r2(R,Secret,nr);\n\t\tclaim_r3(R,Nisynch);\n\t}\n}",
+        "logic": "---\n\n### Protocol Description: `protocol1`\n\n**Overview:**\nThe protocol `protocol1` is a symmetric key exchange protocol involving two parties: Initiator (I) and Responder (R). The protocol aims to establish a secure communication channel between the two roles through nonce-based authentication.\n\n**Roles:**\n1. **Initiator (I)**: \n   - Generates a fresh nonce `ni` to initiate the protocol.\n   - Receives a nonce `nr` from the Responder (R) during the communication.\n   - Claims to have established secrecy over both nonces `ni` and `nr`.\n\n2. **Responder (R)**:\n   - Receives the Initiator's nonce `ni` as part of the protocol's first message.\n   - Generates a fresh nonce `nr` to respond to the Initiator.\n   - Claims to have established secrecy over both nonces `ni` and `nr`.\n\n**Message Flow:**\n1. **Step 1 (I \u2192 R)**: \n   - The Initiator (I) sends a message to the Responder (R) containing its own identity `R` and its fresh nonce `ni`, encrypted with R's public key (`pk(R)`).\n\n2. **Step 2 (R \u2192 I)**: \n   - Upon receiving the first message, the Responder (R) replies with its own nonce `nr`, along with the Initiator's nonce `ni` and its identity `R`. This message is encrypted with the Initiator's public key (`pk(I)`).\n\n3. **Step 3 (I \u2192 R)**: \n   - The Initiator (I) finally sends the nonce `nr` back to the Responder (R), encrypted with R's public key (`pk(R)`).\n\n**Claims:**\n- **Initiator Claims**:\n  - `claim_i1(I, Secret, ni)`: The Initiator claims that it has a secret knowledge of the nonce `ni`.\n  - `claim_i2(I, Secret, nr)`: The Initiator claims that it has a secret knowledge of the nonce `nr`.\n  - `claim_i3(I, Nisynch)`: Indicates that the Initiator expects synchronized communication.\n\n- **Responder Claims**:\n  - `claim_r1(R, Secret, ni)`: The Responder claims that it has a secret knowledge of the nonce `ni`.\n  - `claim_r2(R, Secret, nr)`: The Responder claims that it has a secret knowledge of the nonce `nr`.\n  - `claim_r3(R, Nisynch)`: Indicates that the Responder expects synchronized communication.\n\n**Security Goals:**\nThe protocol aims to ensure the following security properties:\n- **Confidentiality**: Nonces `ni` and `nr` should remain confidential and only known to the respective parties.\n- **Authentication**: Both parties should authenticate each other using the nonces exchanged.\n- **Synchronization**: The communication must be synchronized between the two parties to maintain the state of the ongoing session.\n\n---",
+        "results": [
+            true,
+            [
+                false,
+                [
+                    [
+                        "protocol1",
+                        "I",
+                        "protocol1,i1",
+                        "Secret ni",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "protocol1,i2",
+                        "Secret nr",
+                        "Fail",
+                        "Falsified",
+                        "Exactly 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "protocol1,i3",
+                        "Nisynch",
+                        "Fail",
+                        "Falsified",
+                        "Exactly 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "R",
+                        "protocol1,r1",
+                        "Secret ni",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "protocol1,r2",
+                        "Secret nr",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "protocol1,r3",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.22248029708862305
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/pkmv2rsa.spdl",
+        "falsecode": "/* \n * PKMv2-RSA Protocol\n * A formal model of the PKMv2-RSA protocol for verification with Scyther\n */\n\n// Basic type and function declarations\nhashfunction H;\nusertype Nonce;\nusertype SessionId;\nusertype PreSharedKey;\n\n// The protocol definition\nprotocol PKMv2RSA(MS, BS)\n{\n    role MS\n    {\n        // Local variable declarations\n        fresh msrand: Nonce;\n        fresh said: SessionId;\n        var bsrand: Nonce;\n        var prepak: PreSharedKey;\n        \n        // Step 1: MS sends initial message to BS\n        send_1(MS, BS, {{msrand, said, MS}sk(MS)}pk(BS));\n        \n        // Step 3: MS receives response from BS and verifies\n        recv_2(BS, MS, {{msrand, bsrand, {prepak}pk(MS), MS}sk(BS)}pk(MS));\n        \n        // Step 5: MS sends final acknowledgment\n        send_3(MS, BS, {{bsrand}sk(MS)}pk(BS));\n        \n        // Security claims\n        claim_MS1(MS, Niagree);\n        claim_MS2(MS, Nisynch);\n        claim_MS3(MS, Secret, prepak);\n    }\n    \n    role BS\n    {\n        // Local variable declarations\n        var msrand: Nonce;\n        var said: SessionId;\n        fresh bsrand: Nonce;\n        fresh prepak: PreSharedKey;\n        \n        // Step 2: BS receives initial message and processes\n        recv_1(MS, BS, {{msrand, said, MS}sk(MS)}pk(BS));\n        \n        // Step 4: BS sends response to MS\n        send_2(BS, MS, {{msrand, bsrand, {prepak}pk(MS), MS}sk(BS)}pk(MS));\n        \n        // Step 6: BS receives final acknowledgment\n        recv_3(MS, BS, {{bsrand}sk(MS)}pk(BS));\n        \n        // Security claims\n        claim_BS1(BS, Niagree);\n        claim_BS2(BS, Nisynch);\n        claim_BS3(BS, Secret, prepak);\n        claim_BS4(BS, SKR, prepak);\n    }\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there were no security issues in the targeted protocol. This was a false negative, and there should be some problems with the protocol.",
+        "code": "/* \n * PKMv2-RSA\n *\n * Initial model by:\tSjouke Mauw, Sasa Radomirovic (2007)\n * Model changes:\tCas Cremers (Nov 2012)\n *\n * Analysed in:\t\t\"A framework for compositional verification of security protocols\"\n * \t\t\tWith S. Andova, K. Gjosteen, S. Mauw, S. Mjolsnes, and S. Radomirovic.\n * \t\t\tInformation and Computation, Special issue on Computer Security: \n * \t\t\tFoundations and Automated Reasoning, Volume 206, Issues 2-4, pp. 425-459,\n * \t\t\tElsevier, 2008. \n */\n\n// The protocol description\n\nprotocol pkmv2rsa(MS,BS)\n{\n\trole MS\n\t{\n\t\tfresh msrand, said: Nonce;\n\t\tvar prepak, bsrand: Nonce;\n\n\t\tsend_rsa1(MS,BS, {msrand, said, MS}sk(MS) );\n\t\trecv_rsa2(BS,MS, {msrand, bsrand,{prepak,MS}pk(MS),BS}sk(BS) );\n\t\tsend_rsa3(MS,BS, {bsrand}sk(MS) );\n\n\t\tclaim_rsai3(MS,Niagree);\n\t\tclaim_rsai4(MS,Nisynch);\n\t\tclaim_rsai5(MS,SKR,prepak);\n\t}\t\n\t\n\trole BS\n\t{\n\t\tvar msrand, said: Nonce;\n\t\tfresh prepak, bsrand: Nonce;\n\n\t\trecv_rsa1(MS,BS, {msrand, said, MS}sk(MS) );\n\t\tsend_rsa2(BS,MS, {msrand, bsrand,{prepak,MS}pk(MS),BS}sk(BS) );\n\t\trecv_rsa3(MS,BS, {bsrand}sk(MS) );\n\n\t\tclaim_rsar3(BS,Niagree);\n\t\tclaim_rsar4(BS,Nisynch);\n\t\tclaim_rsar5(BS,SKR,prepak);\n\t}\n}",
+        "logic": "---\n\n### Protocol Description: PKMv2-RSA\n\n**Participants:**\n\n1. **Mobile Station (MS)**: The device that initiates the communication and requests access to the network.\n2. **Base Station (BS)**: The network entity that receives requests from the mobile station and responds to authenticate and establish a secure communication channel.\n\n**Protocol Steps:**\n\n1. **Initialization**:\n   - The Mobile Station (MS) generates a fresh random nonce (`msrand`) and a session identifier (`said`) for the communication.\n\n2. **Step 1 - Sending Initial Message**:\n   - MS sends an encrypted message (`send_rsa1`) to the Base Station (BS) containing the nonces (`msrand`, `said`) and the identity of the MS itself, all encrypted with the MS's private key (`sk(MS)`).\n\n3. **Step 2 - Receiving Response**:\n   - Upon receiving the message, the Base Station (BS) decrypts it to retrieve the nonces and the identity of the MS. It generates its own fresh random nonce (`bsrand`) and a pre-shared key (`prepak`) for the session.\n   - BS then sends a response message (`send_rsa2`) back to MS, which includes the `msrand`, the newly created `bsrand`, the encrypted pre-shared key and identity of the MS, all secured with the Base Station's private key (`sk(BS)`).\n\n4. **Step 3 - Final Acknowledgment**:\n   - The Mobile Station (MS) receives the response from the Base Station. It decrypts the message to extract the `bsrand`.\n   - MS sends a final acknowledgment message (`send_rsa3`) back to BS, encrypted with MS's private key, containing the `bsrand`.\n\n5. **Claims**:\n   - The protocol includes several claims to ensure security properties:\n     - **Claim 1 (`Niagree`)**: Both parties agree on a session identifier.\n     - **Claim 2 (`Nisynch`)**: There is synchronization between the two parties.\n     - **Claim 3 (`SKR`)**: The session key (`prepak`) is correctly established and shared between the MS and the BS.\n\n**Security Properties**:\nThe protocol aims to ensure that:\n- Only legitimate parties can establish a session.\n- The confidentiality of messages is maintained through encryption.\n- The integrity of the messages is ensured by the use of private keys for signing.\n- Both parties can verify that they have agreed upon the same session parameters.\n\n---",
+        "results": [
+            true,
+            [
+                false,
+                [
+                    [
+                        "pkmv2rsa",
+                        "MS",
+                        "pkmv2rsa,rsai3",
+                        "Niagree",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "pkmv2rsa,rsai4",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "pkmv2rsa,rsai5",
+                        "SKR prepak",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "BS",
+                        "pkmv2rsa,rsar3",
+                        "Niagree",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "pkmv2rsa,rsar4",
+                        "Nisynch",
+                        "Fail",
+                        "Falsified",
+                        "At least 1 attack.",
+                        1,
+                        "attack"
+                    ],
+                    [
+                        "",
+                        "",
+                        "pkmv2rsa,rsar5",
+                        "SKR prepak",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.22221755981445312
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/HMQV.spdl",
+        "falsecode": "/* \n * HMQV two pass version\n *\n */\n\n// Hash functions\nhashfunction h1,h2,gexp,exp,KDF,H;\n\n// Addition, multiplication\n// For now, simply hashes\nhashfunction mult,add;\n\n/*\n * Hack to simulate public knowledge of public keys.\n */\nprotocol @publickeys(PK)\n{\n\trole PK\n\t{\n\t\tsend_!1(PK,PK, gexp(sk(PK)));\n\t}\n}\n\t\t\n/*\n * Hack to simulate g^ab = g^ba inside terms.\n * '@' prefix of protocol name denotes helper protocol, which is used by\n * Scyther for displaying, and such protocols are ignored in\n * auto-generation of protocol modifiers.\n */\nprotocol @exponentiation(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tvar X,Y, T1,T2: Ticket;\n\n\t\trecv_!1(RA,RA, h2(\n\t\t  exp(gexp(X),Y),\n\t\t  T1, T2, RA,RB\n\t\t  ));\n\t\tsend_!2(RA,RA, h2(\n\t\t  exp(gexp(Y),X),\n\t\t  T1, T2, RA,RB\n\t\t  ));\n\t}\n\trole RB\n\t{\n\t\tvar X,Y, T1,T2: Ticket;\n\n\t\trecv_!3(RB,RB, h2(\n\t\t  T1,\n\t\t  exp(gexp(X),Y),\n\t\t  T2, RA,RB\n\t\t  ));\n\t\tsend_!4(RB,RB, h2(\n\t\t  T1,\n\t\t  exp(gexp(Y),X),\n\t\t  T2, RA,RB\n\t\t  ));\n\t}\n\trole RC\n\t{\n\t\tvar X,Y, T1,T2: Ticket;\n\n\t\trecv_!5(RC,RC, h2(\n\t\t  T1, T2,\n\t\t  exp(gexp(X),Y),\n\t\t  RA,RB\n\t\t  ));\n\t\tsend_!6(RC,RC, h2(\n\t\t  T1, T2,\n\t\t  exp(gexp(Y),X),\n\t\t  RA,RB\n\t\t  ));\n\t}\n}\n\nprotocol @addmult(I,R)\n{\n\trole I\n\t{\n\t\tvar X,Y: Ticket;\n\n\t\trecv_!1(I,I, add(X,Y) );\n\t\tsend_!2(I,I, add(Y,X) );\n\t}\n\trole R\n\t{\n\t\tvar X,Y: Ticket;\n\n\t\trecv_!3(R,R, mult(X,Y) );\n\t\tsend_!4(R,R, mult(Y,X) );\n\t}\n}\n\nprotocol @keyswap(I,R)\n{\n\trole I\n\t{\n\t\tvar x,y: Nonce;\n\t\trecv_!1(I,I, KDF(exp(mult(gexp(y),exp(gexp(sk(R)),H(gexp(y),I))),add(x,mult(H(gexp(x),R),sk(I))))) );\n\t\tsend_!2(I,I, KDF(exp(mult(gexp(x),exp(gexp(sk(I)),H(gexp(x),R))),add(y,mult(H(gexp(y),I),sk(R))))) );\n\t}\n}\n\n// The protocol description\n\nsymmetric-role protocol HMQV-twopass(I,R)\n{\n\trole I\n\t{\n\t\tfresh x: Nonce;\n\t\tvar Y: Ticket;\n\n\t\tsend_1(I,R, gexp(x) );\n\t\trecv_2(R,I, Y );\n\n\t\tclaim(I,SKR,    KDF(exp(mult(Y,exp(gexp(sk(R)),H(Y,I))),add(x,mult(H(gexp(x),R),sk(I))))) );\n\t\tclaim(I,Secret, x);\n\t\tclaim(I,Secret, sk(I));\n\t\tclaim(I,Alive);\n\t\tclaim(I,Weakagree);\n\t\tclaim(I,Niagree);\n\t\tclaim(I,Nisynch);\n\t}\t\n\t\n\trole R\n\t{\n\t\tfresh y: Nonce;\n\t\tvar X: Ticket;\n\n\t\trecv_1(I,R, X );\n\t\tsend_2(R,I, gexp(y) );\n\n\t\tclaim(R,SKR,    KDF(exp(mult(X,exp(gexp(sk(I)),H(X,R))),add(y,mult(H(gexp(y),I),sk(R))))) );\n\t\tclaim(R,Secret, y);\n\t\tclaim(R,Secret, sk(R));\n\t\tclaim(R,Alive);\n\t\tclaim(R,Weakagree);\n\t\tclaim(R,Niagree);\n\t\tclaim(R,Nisynch);\n\t}\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there was a security issue in the targeted protocol. This was a false positive, and there should be no problem with the protocol.",
+        "code": "/* \n * HMQV two pass version\n *\n */\n\n// Hash functions\nhashfunction h1,h2,gexp,exp,KDF,H;\n\n// Addition, multiplication\n// For now, simply hashes\nhashfunction mult,add;\n\n/*\n * Hack to simulate public knowledge of public keys.\n */\nprotocol @publickeys(PK)\n{\n\trole PK\n\t{\n\t\tsend_!1(PK,PK, gexp(sk(PK)));\n\t}\n}\n\t\t\n/*\n * Hack to simulate g^ab = g^ba inside terms.\n * '@' prefix of protocol name denotes helper protocol, which is used by\n * Scyther for displaying, and such protocols are ignored in\n * auto-generation of protocol modifiers.\n */\nprotocol @exponentiation(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tvar X,Y, T1,T2: Ticket;\n\n\t\trecv_!1(RA,RA, h2(\n\t\t  exp(gexp(X),Y),\n\t\t  T1, T2, RA,RB\n\t\t  ));\n\t\tsend_!2(RA,RA, h2(\n\t\t  exp(gexp(Y),X),\n\t\t  T1, T2, RA,RB\n\t\t  ));\n\t}\n\trole RB\n\t{\n\t\tvar X,Y, T1,T2: Ticket;\n\n\t\trecv_!3(RB,RB, h2(\n\t\t  T1,\n\t\t  exp(gexp(X),Y),\n\t\t  T2, RA,RB\n\t\t  ));\n\t\tsend_!4(RB,RB, h2(\n\t\t  T1,\n\t\t  exp(gexp(Y),X),\n\t\t  T2, RA,RB\n\t\t  ));\n\t}\n\trole RC\n\t{\n\t\tvar X,Y, T1,T2: Ticket;\n\n\t\trecv_!5(RC,RC, h2(\n\t\t  T1, T2,\n\t\t  exp(gexp(X),Y),\n\t\t  RA,RB\n\t\t  ));\n\t\tsend_!6(RC,RC, h2(\n\t\t  T1, T2,\n\t\t  exp(gexp(Y),X),\n\t\t  RA,RB\n\t\t  ));\n\t}\n}\n\nprotocol @addmult(I,R)\n{\n\trole I\n\t{\n\t\tvar X,Y: Ticket;\n\n\t\trecv_!1(I,I, add(X,Y) );\n\t\tsend_!2(I,I, add(Y,X) );\n\t}\n\trole R\n\t{\n\t\tvar X,Y: Ticket;\n\n\t\trecv_!3(R,R, mult(X,Y) );\n\t\tsend_!4(R,R, mult(Y,X) );\n\t}\n}\n\nprotocol @keyswap(I,R)\n{\n\trole I\n\t{\n\t\tvar x,y: Nonce;\n\t\trecv_!1(I,I, KDF(exp(mult(gexp(y),exp(gexp(sk(R)),H(gexp(y),I))),add(x,mult(H(gexp(x),R),sk(I))))) );\n\t\tsend_!2(I,I, KDF(exp(mult(gexp(x),exp(gexp(sk(I)),H(gexp(x),R))),add(y,mult(H(gexp(y),I),sk(R))))) );\n\t}\n}\n\n// The protocol description\n\nsymmetric-role protocol HMQV-twopass(I,R)\n{\n\trole I\n\t{\n\t\tfresh x: Nonce;\n\t\tvar Y: Ticket;\n\n\t\tsend_1(I,R, gexp(x) );\n\t\trecv_2(R,I, Y );\n\n\t\tclaim(I,SKR,    KDF(exp(mult(Y,exp(gexp(sk(R)),H(Y,I))),add(x,mult(H(gexp(x),R),sk(I))))) );\n\t}\t\n\t\n\trole R\n\t{\n\t\tfresh y: Nonce;\n\t\tvar X: Ticket;\n\n\t\trecv_1(I,R, X );\n\t\tsend_2(R,I, gexp(y) );\n\n\t\tclaim(R,SKR,    KDF(exp(mult(X,exp(gexp(sk(I)),H(X,R))),add(y,mult(H(gexp(y),I),sk(R))))) );\n\t}\n}",
+        "logic": "---\n\n### HMQV Two-Pass Protocol Description\n\n**Overview:**\nThe HMQV (Hankerson-Menezes-Qu-Vanstone) two-pass protocol is a key exchange mechanism that allows two parties to securely derive a shared secret key using their respective private keys and public key information. The protocol is designed to be secure against various attacks while ensuring efficient key exchange.\n\n**Hash Functions:**\nThe protocol utilizes several hash functions:\n- `h1`, `h2`: General hash functions used for hashing inputs.\n- `gexp`, `exp`: Functions for exponentiation, representing the operation of raising a base to a power in the context of cryptographic operations.\n- `KDF`: Key Derivation Function to generate symmetric keys from shared secrets.\n- `H`: A hash function used to ensure integrity and authenticity.\n\n**Addition and Multiplication:**\nThe protocol simulates addition and multiplication operations using hash functions `add` and `mult`. These operations are crucial for combining values during key derivation.\n\n**Public Key Simulation:**\nThe protocol includes a helper protocol `@publickeys(PK)` for simulating the public knowledge of public keys. It allows the PK role to send its public key and a computed value based on its secret key.\n\n**Exponentiation Helper Protocol:**\nThe helper protocol `@exponentiation(RA, RB, RC)` simulates the operation of exponentiation and ensures the correct flow of messages between three roles (RA, RB, and RC). Each role receives and sends messages containing hash operations and exponentiated values.\n\n**Addition and Multiplication Helper Protocol:**\nThe `@addmult(I, R)` protocol simulates addition and multiplication operations for the roles I and R, allowing them to exchange combined values securely.\n\n**Key Swap Protocol:**\nThe `@keyswap(I, R)` protocol allows roles I and R to swap keys securely by using their respective nonces and secret keys to derive a shared key.\n\n**Main HMQV Protocol:**\nThe main protocol is defined as `symmetric-role protocol HMQV-twopass(I,R)`. It includes two roles, I and R:\n\n- **Role I:**\n  - Generates a fresh nonce `x`.\n  - Sends the exponentiated value `gexp(x)` to role R.\n  - Receives a ticket `Y` from role R.\n  - Claims a session key `SKR` by deriving it from the exchanged values and its own nonce.\n\n- **Role R:**\n  - Generates a fresh nonce `y`.\n  - Receives the value `X` from role I.\n  - Sends the exponentiated value `gexp(y)` back to role I.\n  - Claims a session key `SKR` similar to role I, using its nonce and the received value.\n\n**Security Claims:**\nEach role claims a session key `SKR`, which is derived using a combination of the received tickets, the respective nonces, and the secret keys. This ensures that both roles can independently compute the same shared secret key.\n\n---",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "HMQV-twopass",
+                        "I",
+                        "HMQV-twopass,I1",
+                        "SKR KDF(exp(mult(Y,exp(gexp(sk(R)),H(Y,I))),add(x,mult(H(gexp(x),R),sk(I)))))",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "R",
+                        "HMQV-twopass,R1",
+                        "SKR KDF(exp(mult(X,exp(gexp(sk(I)),H(X,R))),add(y,mult(H(gexp(y),I),sk(R)))))",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                1.0866367816925049
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/KAS1.spdl",
+        "falsecode": "/* \n * KEA+ Protocol with additional notations\n */\n\n// Hash functions\nhashfunction h1,h2,g1,g2;\n\n// ... [No changes to the publickeys and exponentiation protocols]\n\n// The KEA+ protocol with additional comments and claims\n\nprotocol KEAplus(I,R)\n{\n\trole I // Initiator role\n\t{\n\t\tfresh x: Nonce; // A fresh nonce generated by the Initiator\n\t\tvar beta: Ticket; // A ticket variable used in the protocol\n\n\t\t// Send a compromise message (for illustrative purposes, not part of the original protocol)\n\t\tsend_Compromise(I,I, x);\n\t\t// Send the first message of the KEA+ protocol\n\t\tsend_1(I,R, g1(x) );\n\t\t// Receive the second message from the Responder\n\t\trecv_2(R,I, beta );\n\n\t\t// Claim that the Initiator can compute the session key\n\t\tclaim(I,SKR, h1(\n\t\t  g2(beta,sk(I)),\n\t\t  g2(pk(R),x),\n\t\t  I,R\n\t\t));\n\n\t\t// Additional hypothetical claim for illustrative purposes\n\t\t// This claim is not part of the original protocol and is for demonstration only\n\t\tclaim(I,SKR, h1(g1(x), pk(R), I, R));\n\t}\t\n\t\n\trole R // Responder role\n\t{\n\t\tfresh y: Nonce; // A fresh nonce generated by the Responder\n\t\tvar alpha: Ticket; // A ticket variable used in the protocol\n\n\t\t// Receive the first message from the Initiator\n\t\trecv_1(I,R, alpha );\n\t\t// Send a compromise message (for illustrative purposes, not part of the original protocol)\n\t\tsend_Compromise(R,R, y);\n\t\t// Send the second message of the KEA+ protocol\n\t\tsend_2(R,I, g1(y) );\n\n\t\t// Claim that the Responder can compute the session key\n\t\tclaim(R,SKR, h1(\n\t\t  g2(pk(I),y),\n\t\t  g2(alpha,sk(R)),\n\t\t  I,R\n\t\t));\n\n\t\t// Additional hypothetical claim for illustrative purposes\n\t\t// This claim is not part of the original protocol and is for demonstration only\n\t\tclaim(R,SKR, h1(pk(I), g1(y), R, I));\n\t}\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there was a security issue in the targeted protocol. This was a false positive, and there should be no problem with the protocol.",
+        "code": "/* \n * KEA+\n *\n * From \"Security Analysis of KEA Authenticated Key Exchange Protocol\"\n * Lauter, Mityagin, 2006.\n * \n * We find no attacks in CK if only the ephemeral key is revealed.\n * We do find attacks for both roles in CK if the input to hash1 is\n * revealed.\n */\n\n// Hash functions\nhashfunction h1,h2,g1,g2;\n\n/*\n * Hack to gain equivalence of public keys to g^private.\n */\nprotocol @publickeys(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tsend_!1(RA,RA, g1(sk(RA)) );\n\t}\n\trole RB\n\t{\n\t\t// Special one to go into DH g2\n\t\tvar T: Ticket;\n\n\t\trecv_!2(RB,RB, g2(g1(T),sk(RB)) );\n\t\tsend_!3(RB,RB, g2(pk(RB),T) );\n\t}\n\trole RC\n\t{\n\t\t// Special one to go into DH g2\n\t\tvar T: Ticket;\n\n\t\trecv_!4(RC,RC, g2(pk(RC),T) );\n\t\tsend_!5(RC,RC, g2(g1(T),sk(RC)) );\n\t}\n}\n\n/*\n * Hack to simulate g^ab = g^ba.\n * '@' prefix of protocol name denotes helper protocol, which is used by\n * Scyther for displaying, and such protocols are ignored in\n * auto-generation of protocol modifiers.\n */\nprotocol @exponentiation(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tvar alpha,beta, T1,T2: Ticket;\n\n\t\trecv_!1(RA,RA, g2(g1(T1),T2) );\n\t\tsend_!2(RA,RA, g2(g1(T2),T1) );\n\t}\n\trole RB\n\t{\n\t\tvar T1,T2,T3: Ticket;\n\n\t\trecv_!3(RB,RB, h1(g2(g1(T1),T2),T3,RC,RB) );\n\t\tsend_!4(RB,RB, h1(g2(g1(T2),T1),T3,RC,RB) );\n\t}\n\trole RC\n\t{\n\t\tvar T1,T2,T3: Ticket;\n\n\t\trecv_!5(RC,RC, h1(T3,g2(g1(T1),T2),RC,RA) );\n\t\tsend_!6(RC,RC, h1(T3,g2(g1(T2),T1),RC,RA) );\n\t}\n}\n\n// The protocol description\n\nprotocol KEAplus(I,R)\n{\n\trole I\n\t{\n\t\tfresh x: Nonce;\n\t\tvar beta: Ticket;\n\n\t\tsend_Compromise(I,I, x);\n\t\tsend_1(I,R, g1(x) );\n\t\trecv_2(R,I, beta );\n\n\t\tclaim(I,SKR, h1(\n\t\t  g2(beta,sk(I)),\n\t\t  g2(pk(R),x),\n\t\t  I,R\n\t\t));\n\t}\t\n\t\n\trole R\n\t{\n\t\tfresh y: Nonce;\n\t\tvar alpha: Ticket;\n\n\t\trecv_1(I,R, alpha );\n\t\tsend_Compromise(R,R, y);\n\t\tsend_2(R,I, g1(y) );\n\n\t\tclaim(R,SKR, h1(\n\t\t  g2(pk(I),y),\n\t\t  g2(alpha,sk(R)),\n\t\t  I,R\n\t\t));\n\t}\n}",
+        "logic": "---\n\n### KEA+ Protocol Description\n\n#### Overview\nThe KEA+ (Key Exchange Algorithm Plus) protocol is designed to facilitate secure authenticated key exchange between two parties, denoted as `I` (Initiator) and `R` (Responder). The protocol incorporates the use of ephemeral keys and nonces to ensure freshness and resistance against replay attacks.\n\n#### Goals\nThe primary goal of the KEA+ protocol is to allow two parties, `I` and `R`, to establish a shared secret key (`SKR`) while ensuring the authenticity of each party. The protocol achieves this by utilizing cryptographic primitives such as hash functions and Diffie-Hellman key exchanges.\n\n#### Roles and Messages\nThe KEA+ protocol involves two roles: Initiator (`I`) and Responder (`R`). Each role is responsible for sending and receiving specific messages to facilitate the key exchange.\n\n1. **Role I (Initiator)**\n   - **Step 1:** The initiator generates a fresh nonce `x` and sends a \"compromise\" message to itself, indicating its state of readiness.\n   - **Step 2:** It then sends the value `g1(x)` (a transformation of the nonce `x` using a public function `g1`) to the responder `R`.\n   - **Step 3:** The initiator waits to receive a value `beta` from `R`, which is expected to be generated from `R`\u2019s secret key and its own nonce.\n\n   - **Claim:** Upon receiving `beta`, the initiator claims the shared key `SKR` by computing the hash using the value `beta`, the public key of `R`, and the nonce `x`.\n\n2. **Role R (Responder)**\n   - **Step 1:** The responder receives the value `alpha` (the transformed nonce from `I`) and generates a fresh nonce `y`.\n   - **Step 2:** It sends a \"compromise\" message to itself, indicating its readiness, before sending the value `g1(y)` to the initiator.\n   - **Step 3:** Finally, the responder claims the shared key `SKR` by computing a hash that incorporates `I`'s public key, its nonce `y`, and the value `alpha` it received.\n\n#### Security Considerations\n- The use of fresh nonces (`x` and `y`) ensures that each execution of the protocol is unique and protects against replay attacks.\n- The protocol claims (`SKR`) ensure that both parties can independently compute the same shared secret key based on the values exchanged during the protocol execution.\n- The reliance on cryptographic hash functions (`h1`, `g1`, and `g2`) provides necessary security properties for the key derivation process.\n\n#### Conclusion\nThe KEA+ protocol serves as a robust method for secure key exchange, leveraging fresh nonces and cryptography to ensure authenticity and confidentiality of the shared key between the communicating parties. The successful execution of this protocol allows both parties to derive the same shared secret key, which can be used for subsequent secure communications.\n\n---",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "KEAplus",
+                        "I",
+                        "KEAplus,I1",
+                        "SKR h1(g2(beta,sk(I)),g2(pk(R),x),I,R)",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "R",
+                        "KEAplus,R1",
+                        "SKR h1(g2(pk(I),y),g2(alpha,sk(R)),I,R)",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.8804562091827393
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/isoiec-9798-2-1.spdl",
+        "falsecode": "/*\n * Modeled from ISO/IEC 9798\n * Modeler: Cas Cremers, Dec. 2010\n *\n * symmetric\n * one-pass\n * unilateral\n *\n * Note: the identity B may be ommitted, if\n *   (a) the environment disallows such attacks, or\n *   (b) a unidirectional key is used\n */\nprotocol @keysymm-21(A,B)\n{\n\trole A\n\t{\n\t\tvar T: Nonce;\n\t\tvar Text: Ticket;\n\n\t\t// A receives a message supposedly from B, containing a nonce T, A's identity, and some text, all encrypted with their shared key\n\t\trecv_!1(B,A, { T, A, Text }k(A,B) );\n\t\t\n\t\t// A responds by sending a similar message to B, but with the key k(B,A) which is equivalent to k(A,B) due to symmetry\n\t\tsend_!2(A,B, { T, A, Text }k(B,A) );\n\t\t\n\t\t// Claim that A is running the protocol with B, using nonce T and text Text\n\t\tclaim(A,Running,B,T,Text);\n\t}\n\trole B\n\t{\n\t\tvar T: Nonce;\n\t\tvar Text: Ticket;\n\n\t\t// B receives a message supposedly from A, containing a nonce T, B's identity, and some text, all encrypted with their shared key\n\t\trecv_!3(A,B, { T, B, Text }k(A,B) );\n\t\t\n\t\t// B responds by sending a similar message to A\n\t\tsend_!4(B,A, { T, B, Text }k(B,A) );\n\t\t\n\t\t// B claims it has committed to the protocol run with A, using nonce T and text Text\n\t\tclaim(B,Commit,A,T,Text);\n\t}\n}\n\nprotocol isoiec-9798-2-1(A,B)\n{\n\trole A\n\t{\n\t\tfresh TNA: Nonce;\n\t\tfresh Text1,Text2: Ticket;\n\n\t\t// A claims it is running the protocol with B, using nonce TNA and text Text1\n\t\tclaim(A,Running,B,TNA,Text1);\n\t\t\n\t\t// A sends a message to B containing some text and an encrypted part with a fresh nonce TNA, B's identity, and some text, all encrypted with their shared key\n\t\tsend_1(A,B, Text2, { TNA, B, Text1 }k(A,B) );\n\t\t\n\t\t// Additional claim for A's perspective on the protocol run\n\t\tclaim(A,Secret,TNA);\n\t}\n\trole B\n\t{\n\t\tvar TNA: Nonce;\n\t\tvar Text1,Text2: Ticket;\n\n\t\t// B receives the message from A\n\t\trecv_1(A,B, Text2, { TNA, B, Text1 }k(A,B) );\n\n\t\t// B claims it has committed to the protocol run with A, using nonce TNA and text Text1\n\t\tclaim(B,Commit,A,TNA,Text1);\n\t\t\n\t\t// B claims it is alive, indicating it has received a message and responded appropriately\n\t\tclaim(B,Alive);\n\t\t\n\t\t// B claims weak agreement, indicating it believes it has been talking to A\n\t\tclaim(B,Weakagree);\n\t\t\n\t\t// Additional claim for B's perspective on the secrecy of TNA\n\t\tclaim(B,Secret,TNA);\n\t}\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there was a security issue in the targeted protocol. This was a false positive, and there should be no problem with the protocol.",
+        "code": "/*\n * Modeled from ISO/IEC 9798\n * Modeler: Cas Cremers, Dec. 2010\n *\n * symmetric\n * one-pass\n * unilateral\n *\n * Note: the identity B may be ommitted, if\n *   (a) the environment disallows such attacks, or\n *   (b) a unidirectional key is used\n */\nprotocol @keysymm-21(A,B)\n{\n\trole A\n\t{\n\t\tvar T: Nonce;\n\t\tvar Text: Ticket;\n\n\t\trecv_!1(B,A, { T, A, Text }k(A,B) );\n\t\tsend_!2(A,B, { T, A, Text }k(B,A) );\n\t}\n\trole B\n\t{\n\t\tvar T: Nonce;\n\t\tvar Text: Ticket;\n\n\t\trecv_!3(A,B, { T, B, Text }k(A,B) );\n\t\tsend_!4(B,A, { T, B, Text }k(B,A) );\n\t}\n}\n\nprotocol isoiec-9798-2-1(A,B)\n{\n\trole A\n\t{\n\t\tfresh TNA: Nonce;\n\t\tfresh Text1,Text2: Ticket;\n\n\t\tclaim(A,Running,B,TNA,Text1);\n\t\tsend_1(A,B, Text2, { TNA, B, Text1 }k(A,B) );\n\t}\n\trole B\n\t{\n\t\tvar TNA: Nonce;\n\t\tvar Text1,Text2: Ticket;\n\n\t\trecv_1(A,B, Text2, { TNA, B, Text1 }k(A,B) );\n\n\t\tclaim(B,Commit,A,TNA,Text1);\n\t\tclaim(B,Alive);\n\t\tclaim(B,Weakagree);\n\t}\n}",
+        "logic": "To generate a descriptive content for the provided SPDL files related to the protocols `@keysymm-21` and `isoiec-9798-2-1`, we'll break down the core components of each protocol and describe their functionality, intended use, and the roles involved.\n\n### Protocol Descriptions\n\n#### 1. Protocol: `@keysymm-21`\n\n**Description:**\nThe `@keysymm-21` protocol is a symmetric, one-pass, unilateral authentication protocol modeled after ISO/IEC 9798. This protocol facilitates secure communication between two parties, A and B, utilizing symmetric key cryptography. The primary aim is to ensure that party A can authenticate itself to party B while also securely sending a nonce and a ticket.\n\n**Roles:**\n- **Role A:** \n  - Generates a nonce (`T`) and a ticket (`Text`).\n  - Receives a message from B containing a nonce and a ticket encrypted with the symmetric key `k(A,B)`.\n  - Sends a response back to B, including the nonce and the ticket encrypted with the symmetric key `k(B,A)`.\n\n- **Role B:**\n  - Also generates a nonce (`T`) and a ticket (`Text`).\n  - Receives a message from A containing a nonce and a ticket encrypted with the symmetric key `k(A,B)`.\n  - Sends a response to A, including its own nonce and ticket encrypted with the symmetric key `k(B,A)`.\n\n**Key Features:**\n- The protocol supports secure one-pass authentication, where A can authenticate itself to B without requiring B to authenticate back to A immediately.\n- The use of nonces prevents replay attacks by ensuring freshness in the communication.\n- The handling of tickets allows for the inclusion of additional context or authorization data within the protocol.\n\n#### 2. Protocol: `isoiec-9798-2-1`\n\n**Description:**\nThe `isoiec-9798-2-1` protocol is a symmetric authentication protocol that is part of the ISO/IEC 9798 standard. This protocol is designed for mutual authentication, where both parties (A and B) can confirm each other's identities while securely exchanging data. It incorporates freshness and claims to ensure the integrity and authenticity of the exchanged information.\n\n**Roles:**\n- **Role A:**\n  - Generates a fresh nonce (`TNA`) and two tickets (`Text1`, `Text2`).\n  - Claims its intent to run the authentication by asserting its identity and the nonce.\n  - Sends a message to B containing the second ticket (`Text2`) along with an encrypted message that includes the nonce, B's identity, and the first ticket (`Text1`).\n\n- **Role B:**\n  - Receives the message from A, which includes the second ticket and the encrypted nonce and ticket.\n  - Decrypts the received message to validate A's identity and the freshness of the nonce.\n  - Claims its commitment to the authentication, confirms its identity, and asserts that both parties are alive and have reached a weak agreement.\n\n**Key Features:**\n- The protocol emphasizes mutual authentication, where both parties verify each other's identities.\n- Freshness is ensured through the use of nonces, preventing replay attacks.\n- The protocol includes claims that can be used to assert the status of the communication, such as `Running`, `Commit`, `Alive`, and `Weakagree`.\n\n### Summary\n\nBoth protocols are designed for secure communication using symmetric key cryptography, though they serve different purposes and levels of authentication. The `@keysymm-21` protocol focuses on unilateral authentication for party A, while the `isoiec-9798-2-1` protocol provides mutual authentication and includes additional claims for enhanced security.",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "isoiec-9798-2-1",
+                        "B",
+                        "isoiec-9798-2-1,B1",
+                        "Commit A,TNA,Text1",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "isoiec-9798-2-1,B2",
+                        "Alive",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "isoiec-9798-2-1,B3",
+                        "Weakagree",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.17035961151123047
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/andrew-lowe-ban.spdl",
+        "falsecode": "# Lowe modified BAN concrete Andrew Secure RPC\n#\n# Modelled after the description in the SPORE library\n# http://www.lsv.ens-cachan.fr/spore/andrewLowe.html\n#\n# Note:\n# The shared key between I and R is modelled as k(I,R) currently\n# there is no way to express that this key is equal to k(R,I)\n# So it is possile that certain attacks that use this property are not found\n#\n# Note:\n# Recv 4 by the Initatior has been placed after the synchronisation claim\n# as it allows trivial synchronisation attacks otherwise (the message is\n# completely fresh and can therefore always be replaced by an arbitrary value\n# created by the intruder) which are not considered in SPORE\n#\n# Note:\n# According to SPORE there are no known attacks on this protocol\n#\n\nusertype SessionKey;\nconst Fresh: Function;\nconst Compromised: Function;\n\nprotocol andrew-LoweBan(I,R)\n{\n    role I\n    {\n        fresh ni: Nonce;\n        var nr: Nonce;\n        var kir: SessionKey;\n\n        send_1(I,R, I,ni );\n        recv_2(R,I, {ni,kir,R}k(I,R) );\n        \n        // At this point, I knows R is alive because its fresh nonce ni has been returned.\n        claim(I, Alive);\n        // I also claims weak agreement with R.\n        claim(I, Weakagree);\n\n        send_3(I,R, {ni}kir );\n\n        // I commits to a session with R, agreeing on the nonce ni and session key kir.\n        // This corresponds to the Nisynch property.\n        claim(I, Commit, R, ni, kir);\n\n        // The session key kir must remain secret between I and R.\n        claim(I, Secret, kir);\n        // The original claim(I,Empty, (Fresh,kir)) is not standard Scyther syntax.\n        // The freshness of kir from I's perspective is guaranteed by the freshness of ni,\n        // which is included in the message creating kir.\n        \n        recv_4(R,I, nr );\n    }    \n    \n    role R\n    {\n        var ni: Nonce;\n        fresh nr: Nonce;\n        fresh kir: SessionKey;\n\n        recv_1(I,R, I,ni );\n        send_2(R,I, {ni,kir,R}k(I,R) );\n        recv_3(I,R, {ni}kir );\n\n        // R knows I is alive because I correctly used the fresh session key kir.\n        claim(R, Alive);\n        // R also claims weak agreement with I.\n        claim(R, Weakagree);\n\n        send_4(R,I, nr );\n\n        // R confirms it is running a session with I, agreeing on ni and kir.\n        // This matches I's Commit claim.\n        claim(R, Running, I, ni, kir);\n\n        // The session key kir must remain secret between I and R.\n        claim(R, Secret, kir);\n        // The original claim(R,Empty, (Fresh,kir)) is not standard Scyther syntax.\n        // R generates kir freshly, so the 'fresh' keyword already asserts this property.\n    }\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there was a security issue in the targeted protocol. This was a false positive, and there should be no problem with the protocol.",
+        "code": "# Lowe modified BAN concrete Andrew Secure RPC\n#\n# Modelled after the description in the SPORE library\n# http://www.lsv.ens-cachan.fr/spore/andrewLowe.html\n#\n# Note:\n# The shared key between I and R is modelled as k(I,R) currently\n# there is no way to express that this key is equal to k(R,I)\n# So it is possile that certain attacks that use this property are not found\n#\n# Note:\n# Recv 4 by the Initatior has been placed after the synchronisation claim\n# as it allows trivial synchronisation attacks otherwise (the message is\n# completely fresh and can therefore always be replaced by an arbitrary value\n# created by the intruder) which are not considered in SPORE\n#\n# Note:\n# According to SPORE there are no known attacks on this protocol\n#\n\nusertype SessionKey;\nconst Fresh: Function;\nconst Compromised: Function;\n\nprotocol andrew-LoweBan(I,R)\n{\n    role I\n    {\n        fresh ni: Nonce;\n        var nr: Nonce;\n        var kir: SessionKey;\n\n        send_1(I,R, I,ni );\n        recv_2(R,I, {ni,kir,R}k(I,R) );\n        send_3(I,R, {ni}kir );\n        claim_I1(I,Nisynch);\n        claim_I2(I,Secret, kir);\n        claim_I3(I,Empty, (Fresh,kir));\n        recv_4(R,I, nr );\n    }    \n    \n    role R\n    {\n        var ni: Nonce;\n        fresh nr: Nonce;\n        fresh kir: SessionKey;\n\n        recv_1(I,R, I,ni );\n        send_2(R,I, {ni,kir,R}k(I,R) );\n        recv_3(I,R, {ni}kir );\n        send_4(R,I, nr );\n        claim_R1(R,Nisynch);\n        claim_R2(R,Secret, kir);\n        claim_R3(R,Empty, (Fresh,kir));\n    }\n}",
+        "logic": "---\n\n### Protocol Description: Andrew Secure RPC\n\n**Overview:**\nThe Andrew Secure RPC protocol is a secure communication protocol designed for two parties, an Initiator (I) and a Responder (R), to establish a secure session using a shared secret key. The protocol ensures confidentiality and integrity of messages exchanged between the parties while preventing unauthorized access.\n\n**Roles:**\n1. **Initiator (I)**: The party that starts the communication and sends the initial message.\n2. **Responder (R)**: The party that responds to the Initiator's message and completes the session establishment.\n\n**Key Components:**\n- **Nonces**: Random values (`ni` for Initiator and `nr` for Responder) used to ensure freshness of messages and prevent replay attacks.\n- **Session Key (kir)**: A key shared between the Initiator and Responder for the duration of the session. This key is derived during the protocol execution.\n\n**Message Flow:**\n1. **Step 1**: The Initiator (I) generates a nonce (`ni`) and sends a message to the Responder (R) containing its identity (`I`) and the nonce (`ni`).\n   - Message: `send_1(I, R, I, ni)`\n\n2. **Step 2**: The Responder (R) receives the message, generates its own nonce (`nr`), and creates a session key (`kir`). It then sends back a message to the Initiator containing the nonce (`ni`), the session key (`kir`), and its identity (`R`), all encrypted with the shared key `k(I, R)`.\n   - Message: `send_2(R, I, {ni, kir, R}k(I, R))`\n\n3. **Step 3**: The Initiator (I) receives the message, extracts the session key (`kir`), and sends a confirmation message back to the Responder (R) containing the nonce (`ni`) encrypted with the session key (`kir`).\n   - Message: `send_3(I, R, {ni}kir)`\n\n4. **Step 4**: After confirmation, the Responder (R) sends its nonce (`nr`) back to the Initiator (I) to complete the session establishment.\n   - Message: `send_4(R, I, nr)`\n\n**Claims:**\n- **Initiator Claims**:\n  1. `claim_I1(I, Nisynch)`: The Initiator claims that the session is synchronized.\n  2. `claim_I2(I, Secret, kir)`: The Initiator claims that it has established a secret session key (`kir`).\n  3. `claim_I3(I, Empty, (Fresh, kir))`: The Initiator claims the session key (`kir`) is fresh.\n\n- **Responder Claims**:\n  1. `claim_R1(R, Nisynch)`: The Responder claims that the session is synchronized.\n  2. `claim_R2(R, Secret, kir)`: The Responder claims that it has established a secret session key (`kir`).\n  3. `claim_R3(R, Empty, (Fresh, kir))`: The Responder claims the session key (`kir`) is fresh.\n\n**Important Notes:**\n- The shared key between the Initiator and Responder (`k(I, R)`) is modeled as a symmetric key, and there is currently no formalism in the model to express that this key is equal to `k(R, I)`. \n- The placement of the reception of message 4 by the Initiator after the synchronization claim is intentional to prevent trivial synchronization attacks.\n- According to the SPORE library, there are no known attacks on this protocol, indicating a robust design against common vulnerabilities.\n\n---",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "andrew-LoweBan",
+                        "I",
+                        "andrew-LoweBan,I1",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "andrew-LoweBan,I2",
+                        "Secret kir",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "R",
+                        "andrew-LoweBan,R1",
+                        "Nisynch",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "andrew-LoweBan,R2",
+                        "Secret kir",
+                        "OK",
+                        "Verified",
+                        "No attacks.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.16938185691833496
+            ]
+        ]
+    },
+    {
+        "file": "SPDL-1/KAS1-1.spdl",
+        "falsecode": "/* \n * KEA+\n *\n * From \"Security Analysis of KEA Authenticated Key Exchange Protocol\"\n * Lauter, Mityagin, 2006.\n * \n * We find no attacks in CK if only the ephemeral key is revealed.\n * We do find attacks for both roles in CK if the input to hash1 is\n * revealed.\n */\n\n// Hash functions\nhashfunction h1,h2,g1,g2;\n\n/*\n * Hack to gain equivalence of public keys to g^private.\n */\nprotocol @publickeys(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tsend_!1(RA,RA, g1(sk(RA)) );\n\t}\n\trole RB\n\t{\n\t\t// Special one to go into DH g2\n\t\tvar T: Ticket;\n\n\t\trecv_!2(RB,RB, g2(g1(T),sk(RB)) );\n\t\tsend_!3(RB,RB, g2(pk(RB),T) );\n\t}\n\trole RC\n\t{\n\t\t// Special one to go into DH g2\n\t\tvar T: Ticket;\n\n\t\trecv_!4(RC,RC, g2(pk(RC),T) );\n\t\tsend_!5(RC,RC, g2(g1(T),sk(RC)) );\n\t}\n}\n\n/*\n * Hack to simulate g^ab = g^ba.\n * '@' prefix of protocol name denotes helper protocol, which is used by\n * Scyther for displaying, and such protocols are ignored in\n * auto-generation of protocol modifiers.\n */\nprotocol @exponentiation(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tvar alpha,beta, T1,T2: Ticket;\n\n\t\trecv_!1(RA,RA, g2(g1(T1),T2) );\n\t\tsend_!2(RA,RA, g2(g1(T2),T1) );\n\t}\n\trole RB\n\t{\n\t\tvar T1,T2,T3: Ticket;\n\n\t\trecv_!3(RB,RB, h1(g2(g1(T1),T2),T3,RC,RB) );\n\t\tsend_!4(RB,RB, h1(g2(g1(T2),T1),T3,RC,RB) );\n\t}\n\trole RC\n\t{\n\t\tvar T1,T2,T3: Ticket;\n\n\t\trecv_!5(RC,RC, h1(T3,g2(g1(T1),T2),RC,RA) );\n\t\tsend_!6(RC,RC, h1(T3,g2(g1(T2),T1),RC,RA) );\n\t}\n}\n\n// The protocol description\n\nprotocol KEAplus(I,R)\n{\n\trole I\n\t{\n\t\tfresh x: Nonce;\n\t\tvar beta: Ticket;\n\n\t\t// The ephemeral private key 'x' is compromised to test forward secrecy.\n\t\tsend_Compromise(I,I, x);\n\n\t\tsend_1(I,R, g1(x) );\n\t\trecv_2(R,I, beta );\n\n\t\t/* -- Security Claims for the Initiator -- */\n\t\t// Liveness: I is assured that R is running the protocol.\n\t\tclaim(I, Alive);\n\t\t// Non-injective Agreement: I is assured that R is running the protocol with I.\n\t\tclaim(I, Niagree);\n\t\t// Non-injective Synchronization: A stronger property ensuring run correspondence.\n\t\tclaim(I, Nisynch);\n\t\t// Secrecy of ephemeral key. This claim is expected to fail due to the send_Compromise call above.\n\t\tclaim(I, Secret, x);\n\n\t\t// Session Key Agreement: I and R agree on a key, and it is secret from an attacker.\n\t\t// This is the main security goal of the protocol.\n\t\tclaim(I,SKR, h1(\n\t\t  g2(beta,sk(I)),\n\t\t  g2(pk(R),x),\n\t\t  I,R\n\t\t));\n\t}\t\n\t\n\trole R\n\t{\n\t\tfresh y: Nonce;\n\t\tvar alpha: Ticket;\n\n\t\trecv_1(I,R, alpha );\n\n\t\t// The ephemeral private key 'y' is compromised to test forward secrecy.\n\t\tsend_Compromise(R,R, y);\n\n\t\tsend_2(R,I, g1(y) );\n\t\t\n\t\t/* -- Security Claims for the Responder -- */\n\t\t// Liveness: R is assured that I is running the protocol.\n\t\tclaim(R, Alive);\n\t\t// Non-injective Agreement: R is assured that I is running the protocol with R.\n\t\tclaim(R, Niagree);\n\t\t// Non-injective Synchronization: A stronger property ensuring run correspondence.\n\t\tclaim(R, Nisynch);\n\t\t// Secrecy of ephemeral key. This claim is expected to fail due to the send_Compromise call above.\n\t\tclaim(R, Secret, y);\n\n\t\t// Session Key Agreement: R and I agree on a key, and it is secret from an attacker.\n\t\tclaim(R,SKR, h1(\n\t\t  g2(pk(I),y),\n\t\t  g2(alpha,sk(R)),\n\t\t  I,R\n\t\t));\n\t}\n}",
+        "falseinfo": "However, the verification results of this file code illustrate that there was a security issue in the targeted protocol. This was a false positive, and there should be no problem with the protocol.",
+        "code": "/* \n * KEA+\n *\n * From \"Security Analysis of KEA Authenticated Key Exchange Protocol\"\n * Lauter, Mityagin, 2006.\n * \n * We find no attacks in CK if only the ephemeral key is revealed.\n * We do find attacks for both roles in CK if the input to hash1 is\n * revealed.\n */\n\n// Hash functions\nhashfunction h1,h2,g1,g2;\n\n/*\n * Hack to gain equivalence of public keys to g^private.\n */\nprotocol @publickeys(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tsend_!1(RA,RA, g1(sk(RA)) );\n\t}\n\trole RB\n\t{\n\t\t// Special one to go into DH g2\n\t\tvar T: Ticket;\n\n\t\trecv_!2(RB,RB, g2(g1(T),sk(RB)) );\n\t\tsend_!3(RB,RB, g2(pk(RB),T) );\n\t}\n\trole RC\n\t{\n\t\t// Special one to go into DH g2\n\t\tvar T: Ticket;\n\n\t\trecv_!4(RC,RC, g2(pk(RC),T) );\n\t\tsend_!5(RC,RC, g2(g1(T),sk(RC)) );\n\t}\n}\n\n/*\n * Hack to simulate g^ab = g^ba.\n * '@' prefix of protocol name denotes helper protocol, which is used by\n * Scyther for displaying, and such protocols are ignored in\n * auto-generation of protocol modifiers.\n */\nprotocol @exponentiation(RA,RB,RC)\n{\n\trole RA\n\t{\n\t\tvar alpha,beta, T1,T2: Ticket;\n\n\t\trecv_!1(RA,RA, g2(g1(T1),T2) );\n\t\tsend_!2(RA,RA, g2(g1(T2),T1) );\n\t}\n\trole RB\n\t{\n\t\tvar T1,T2,T3: Ticket;\n\n\t\trecv_!3(RB,RB, h1(g2(g1(T1),T2),T3,RC,RB) );\n\t\tsend_!4(RB,RB, h1(g2(g1(T2),T1),T3,RC,RB) );\n\t}\n\trole RC\n\t{\n\t\tvar T1,T2,T3: Ticket;\n\n\t\trecv_!5(RC,RC, h1(T3,g2(g1(T1),T2),RC,RA) );\n\t\tsend_!6(RC,RC, h1(T3,g2(g1(T2),T1),RC,RA) );\n\t}\n}\n\n// The protocol description\n\nprotocol KEAplus(I,R)\n{\n\trole I\n\t{\n\t\tfresh x: Nonce;\n\t\tvar beta: Ticket;\n\n\t\tsend_Compromise(I,I, x);\n\t\tsend_1(I,R, g1(x) );\n\t\trecv_2(R,I, beta );\n\n\t\tclaim(I,SKR, h1(\n\t\t  g2(beta,sk(I)),\n\t\t  g2(pk(R),x),\n\t\t  I,R\n\t\t));\n\t}\t\n\t\n\trole R\n\t{\n\t\tfresh y: Nonce;\n\t\tvar alpha: Ticket;\n\n\t\trecv_1(I,R, alpha );\n\t\tsend_Compromise(R,R, y);\n\t\tsend_2(R,I, g1(y) );\n\n\t\tclaim(R,SKR, h1(\n\t\t  g2(pk(I),y),\n\t\t  g2(alpha,sk(R)),\n\t\t  I,R\n\t\t));\n\t}\n}",
+        "logic": "---\n\n### KEA+ Protocol Description\n\n#### Overview\nThe KEA+ (Key Exchange Algorithm Plus) protocol is designed to facilitate secure authenticated key exchange between two parties, denoted as `I` (Initiator) and `R` (Responder). The protocol incorporates the use of ephemeral keys and nonces to ensure freshness and resistance against replay attacks.\n\n#### Goals\nThe primary goal of the KEA+ protocol is to allow two parties, `I` and `R`, to establish a shared secret key (`SKR`) while ensuring the authenticity of each party. The protocol achieves this by utilizing cryptographic primitives such as hash functions and Diffie-Hellman key exchanges.\n\n#### Roles and Messages\nThe KEA+ protocol involves two roles: Initiator (`I`) and Responder (`R`). Each role is responsible for sending and receiving specific messages to facilitate the key exchange.\n\n1. **Role I (Initiator)**\n   - **Step 1:** The initiator generates a fresh nonce `x` and sends a \"compromise\" message to itself, indicating its state of readiness.\n   - **Step 2:** It then sends the value `g1(x)` (a transformation of the nonce `x` using a public function `g1`) to the responder `R`.\n   - **Step 3:** The initiator waits to receive a value `beta` from `R`, which is expected to be generated from `R`\u2019s secret key and its own nonce.\n\n   - **Claim:** Upon receiving `beta`, the initiator claims the shared key `SKR` by computing the hash using the value `beta`, the public key of `R`, and the nonce `x`.\n\n2. **Role R (Responder)**\n   - **Step 1:** The responder receives the value `alpha` (the transformed nonce from `I`) and generates a fresh nonce `y`.\n   - **Step 2:** It sends a \"compromise\" message to itself, indicating its readiness, before sending the value `g1(y)` to the initiator.\n   - **Step 3:** Finally, the responder claims the shared key `SKR` by computing a hash that incorporates `I`'s public key, its nonce `y`, and the value `alpha` it received.\n\n#### Security Considerations\n- The use of fresh nonces (`x` and `y`) ensures that each execution of the protocol is unique and protects against replay attacks.\n- The protocol claims (`SKR`) ensure that both parties can independently compute the same shared secret key based on the values exchanged during the protocol execution.\n- The reliance on cryptographic hash functions (`h1`, `g1`, and `g2`) provides necessary security properties for the key derivation process.\n\n#### Conclusion\nThe KEA+ protocol serves as a robust method for secure key exchange, leveraging fresh nonces and cryptography to ensure authenticity and confidentiality of the shared key between the communicating parties. The successful execution of this protocol allows both parties to derive the same shared secret key, which can be used for subsequent secure communications.\n\n---",
+        "results": [
+            true,
+            [
+                true,
+                [
+                    [
+                        "KEAplus",
+                        "I",
+                        "KEAplus,I1",
+                        "SKR h1(g2(beta,sk(I)),g2(pk(R),x),I,R)",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ],
+                    [
+                        "",
+                        "R",
+                        "KEAplus,R1",
+                        "SKR h1(g2(pk(I),y),g2(alpha,sk(R)),I,R)",
+                        "OK",
+                        null,
+                        "No attacks within bounds.",
+                        0,
+                        ""
+                    ]
+                ],
+                0.8804562091827393
+            ]
+        ]
     }
 ]
